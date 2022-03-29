@@ -1,0 +1,8 @@
+# Purpose
+This repository contains a development setup from scratch.
+
+The setup is based on a container in which all the needed
+tools are installed.
+
+There's tmux and nvim configured for dev.
+
