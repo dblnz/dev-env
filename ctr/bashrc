@@ -12,3 +12,8 @@ __PS1_RED="\[$(tput setaf 1)\]"
 __PS1_YELLOW="\[$(tput setaf 3)\]"
 __PS1_CLEAR="\[$(tput sgr0)\]"
 export PS1="${__PS1_RED}[\A]${__PS1_GREEN} \u@\h:${__PS1_CLEAR}[${__PS1_CYAN}\W${__PS1_CLEAR}]# "
+
+
+# Aliases
+alias ll="ls -l"
+
