@@ -3,6 +3,7 @@ FROM fedora:latest
 ARG USER_NAME
 ARG USER_ID
 ARG GROUP_ID
+ARG GIT_KEY="id_github_rsa_4096_0"
 ARG RUST_TOOLCHAIN="stable"
 ARG GO_VERSION="1.14.1"
 ARG HOSTNAME=dev
@@ -23,6 +24,7 @@ RUN sed -i -E "/tsflags=*nodocs/ d" /etc/dnf/dnf.conf; \
 
 RUN dnf -y update \
 	&& dnf -y install \
+		bash-completion \
 		binutils-devel \
 		bison \
 		clang-devel \
@@ -89,7 +91,23 @@ RUN groupadd -g $GROUP_ID $USER_NAME \
 	&& curl "https://dl.google.com/go/go${GO_VERSION}.linux-amd64.tar.gz" | tar -C /usr/local -zx
 
 
+# Copy generated key for git ssh connection
+COPY ${GIT_KEY} /home/${USER_NAME}/.ssh/id_rsa
+COPY ${GIT_KEY}.pub /home/${USER_NAME}/.ssh/id_rsa.pub
+RUN group_name=$(getent group ${GROUP_ID} | cut -d: -f1) && chown -R ${USER_NAME}:$group_name /home/${USER_NAME}/.ssh
+RUN echo "Host *github.com\n\tStrictHostKeyChecking no\n" >> /home/${USER_NAME}/.ssh/config
+
 USER ${USER_NAME}
+
+# Configure GIT signing key
+RUN git config --global commit.gpgsign true
+RUN git config --global gpg.format ssh
+RUN git config --global gpg.ssh.allowedSignersFile ~/.ssh/allowed_signers
+RUN touch ~/.ssh/allowed_signers
+RUN pub_key=$(cat ~/.ssh/id_rsa.pub) \
+	 && email=$(git config user.email) \
+	 && echo "$email $pub_key" > ~/.ssh/allowed_signers \
+	 && git config --global user.signingkey "$pub_key"
 
 # Install Rust
 RUN curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain "${RUST_TOOLCHAIN}" \

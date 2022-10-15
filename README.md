@@ -1,0 +1,50 @@
+# Purpose
+This repository contains a development setup from scratch.
+
+The setup is based on a container in which all the needed
+tools are installed.
+
+There's tmux and nvim configured for dev.
+
+## Build/Run Steps
+The following command will build the container and install all needed
+tools on it.
+```
+$ ./build-ctr.sh
+```
+
+Run the following command to start a container and ssh into it.
+```
+$ ./run.sh
+```
+
+One can provide the `-v <src_dir>:<dest_dir>` parameter for a local
+directory to be mapped on the container.
+
+## Key configuration
+When running the build step, the script will generate a RSA key for use
+inside the container.
+
+One can configure that key to be used for a wide range of scenarios:
+- git ssh key
+- login key to other hosts
+
+## Git signature setup
+A major part of the configuration of git commit signoff is already done,
+however, the only steps needed to run are:
+```
+$ eval $(ssh-agent)
+$ ssh-add ~/.ssh/id_rsa
+```
+
+This will use the generated key to sign the commits. The corresponding
+public key `~/.ssh/id_rsa.pub` needs to be configured in Github for
+correct verification.
+
+Test to see if it works:
+```
+$ git commit -S --allow-empty -m "Test"
+$ git show --show-signature
+```
+
+The signature should be shown as verified correctly.
