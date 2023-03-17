@@ -122,7 +122,7 @@ RUN curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain "${RUST_TOO
 		&& cargo kcov --print-install-kcov-sh | sh \
 	&& cd "$HOME" \
 	&& rm -rf "$HOME/tmp" \
-	&& cargo install bindgen
+	&& cargo install cbindgen
 
 RUN mkdir -p $HOME/.local/share/nvim/site/autoload \
 	&& curl -fLo $HOME/.local/share/nvim/site/autoload/plug.vim --create-dirs \
