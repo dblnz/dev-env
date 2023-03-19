@@ -114,15 +114,15 @@ RUN curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain "${RUST_TOO
 	&& rustup target add x86_64-unknown-linux-musl \
 	&& rustup component add rustfmt \
 	&& rustup component add clippy-preview \
-	&& rustup component add rls rust-analysis rust-src \
+	&& rustup component add rust-analyzer rust-analysis rust-src \
 	&& mkdir -p "$HOME/tmp" \
 		&& cd "$HOME/tmp" \
 		&& cargo install cargo-audit \
 		&& cargo install cargo-kcov \
 		&& cargo kcov --print-install-kcov-sh | sh \
 	&& cd "$HOME" \
-	&& rm -rf "$HOME/tmp" \
-	&& cargo install cbindgen
+	&& cargo install cbindgen \
+	&& rm -rf "$HOME/tmp"
 
 RUN mkdir -p $HOME/.local/share/nvim/site/autoload \
 	&& curl -fLo $HOME/.local/share/nvim/site/autoload/plug.vim --create-dirs \

@@ -8,7 +8,7 @@ GIT_KEY=${CTR_CONTEXT_DIR}/${KEY_NAME}
 
 generate_key() {
 	if [ ! -f ${GIT_KEY} ]; then
-		ssh-keygen -t rsa -b 4096 -f ${KEY_NAME}
+		ssh-keygen -t rsa -b 4096 -f ${GIT_KEY}
 		# ssh-copy-id -i ./id_rsa_shared remoteuser@remotehost
 	fi
 }
