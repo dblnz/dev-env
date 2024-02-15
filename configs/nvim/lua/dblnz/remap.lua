@@ -34,3 +34,7 @@ vim.keymap.set("n", "<leader>j", "<cmd>lprev<CR>zz")
 
 vim.keymap.set("n", "<leader>s", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]])
 
+-- Tabs
+vim.keymap.set("n", "<A-1>", "1gt")
+vim.keymap.set("n", "<A-2>", "2gt")
+vim.keymap.set("n", "<A-3>", "3gt")
