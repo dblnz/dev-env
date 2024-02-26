@@ -40,5 +40,9 @@ return require('packer').startup(function(use)
     use { 'simrat39/rust-tools.nvim' }
     use { "catppuccin/nvim", as = "catppuccin" }
     use ( "github/copilot.vim", { run = ":Copilot enable" } )
+    use { 'nvim-tree/nvim-tree.lua', requires = {
+            'nvim-tree/nvim-web-devicons', -- optional
+        },
+    }
 end)
 
