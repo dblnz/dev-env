@@ -1,11 +1,11 @@
-FROM fedora:latest
+FROM fedora:latest as base
 
 ARG USER_NAME
 ARG USER_ID
 ARG GROUP_ID
 ARG GIT_KEY="id_github_rsa_4096_0"
 ARG RUST_TOOLCHAIN="stable"
-ARG GO_VERSION="1.14.1"
+ARG GO_VERSION="1.21.9"
 ARG HOSTNAME=dev
 
 ENV HOME=/home/${USER_NAME}
@@ -78,10 +78,12 @@ RUN python3 -m pip install setuptools wheel \
 		requests-unixsocket \
 		retry
 
-ADD bashrc ${HOME}/.bashrc
-ADD init.vim ${HOME}/.config/nvim/init.vim
-ADD tmux.conf ${HOME}/.tmux.conf
-ADD gitconfig ${HOME}/.gitconfig
+FROM base as dev
+
+ADD configs/bash/bashrc ${HOME}/.bashrc
+ADD configs/git/gitconfig ${HOME}/.gitconfig
+ADD configs/tmux/tmux.conf ${HOME}/.tmux.conf
+ADD configs/nvim ${HOME}/.config/nvim
 
 RUN groupadd -g $GROUP_ID $USER_NAME \
 	; group_name=$(getent group ${GROUP_ID} | cut -d: -f1) \
@@ -124,12 +126,10 @@ RUN curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain "${RUST_TOO
 	&& cargo install cbindgen \
 	&& rm -rf "$HOME/tmp"
 
-RUN mkdir -p $HOME/.local/share/nvim/site/autoload \
-	&& curl -fLo $HOME/.local/share/nvim/site/autoload/plug.vim --create-dirs \
-		https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim \
-	&& cat $HOME/.config/nvim/init.vim | sed -n "/^call plug#begin/,/^call plug#end/ p" > /tmp/plug-init.vim \
-		&& nvim --headless -u /tmp/plug-init.vim +"PlugInstall --sync" +"UpdateRemotePlugins" +qall \
-		&& rm -f /tmp/plug-init.vim \
+RUN git clone --depth 1 https://github.com/wbthomason/packer.nvim \
+        ~/.local/share/nvim/site/pack/packer/start/packer.nvim \
+    && nvim --headless -c 'autocmd User PackerComplete quitall' -c 'PackerSync' \
+    && nvim --headless -c "TSUpdate" -c "MasonUpdate" -c "qall" \
 	&& mkdir -p $HOME/.tmux/plugins \
 		&& git clone https://github.com/tmux-plugins/tpm $HOME/.tmux/plugins/tpm \
 		&& bash -c "export TMUX_PLUGIN_MANAGER_PATH=$HOME/.tmux/plugins; $HOME/.tmux/plugins/tpm/bin/install_plugins" \

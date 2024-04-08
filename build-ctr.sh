@@ -18,11 +18,12 @@ main() {
 
 	docker build \
 		-t "$CTR_NAME:latest" \
+        --build-arg CONFIGS_DIR="${CONFIGS_DIR}" \
 		--build-arg USER_NAME=$(whoami) \
 		--build-arg USER_ID=$(id -u) \
 		--build-arg GROUP_ID=$(id -g) \
 		--build-arg GIT_KEY="${KEY_NAME}" \
-		"$CTR_CONTEXT_DIR"
+        .
 	ok_or_die "ERROR: Container build failed"
 }
 

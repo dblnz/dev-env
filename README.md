@@ -6,6 +6,33 @@ tools are installed.
 
 There's tmux and nvim configured for dev.
 
+## GIT Configuration
+The git configuration is set to use the ED25519 key generated during the
+container build.
+
+The user and email are set to the following:
+```bash
+git config --global user.email "email"
+git config --global user.name "name"
+
+# For signing commits
+git config --global gpg.format ssh
+git config --global user.signingkey /PATH/TO/.SSH/KEY.PUB
+```
+
+## Development Tools
+- Docker
+- alacritty - terminal emulator
+- Nvim - text editor
+    - fugitive
+    - harpoon    - bookmarks files for easy switch between files
+    - lsp        - language server plugin
+    - nvim-tree  - directory tree pane
+    - telescope  - fuzzy finder
+    - treesitter - syntax highlighter
+    - undo-tree  - file history
+- kellij - terminal multiplexer
+
 ## Build/Run Steps
 The following command will build the container and install all needed
 tools on it.
@@ -48,3 +75,5 @@ $ git show --show-signature
 ```
 
 The signature should be shown as verified correctly.
+
+
