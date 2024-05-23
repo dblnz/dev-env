@@ -33,3 +33,11 @@ vim.opt.colorcolumn = "80"
 
 vim.g.mapleader = " "
 
+-- The below lines help with line breaking at maximum textwidth
+vim.opt.formatoptions:append("t")
+-- workaround for autoformatting being overwriten
+vim.cmd([[autocmd BufEnter * set formatoptions+=t]])
+vim.opt.textwidth = 80
+vim.opt.wrapmargin = 0
+vim.opt.linebreak = true
+
