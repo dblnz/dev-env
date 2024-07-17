@@ -1,0 +1,40 @@
+---
+# tasks file for zsh
+- name: Install Zsh
+  become: true
+  package:
+    name: zsh
+    state: present
+
+- name: Set Zsh as default shell
+  become: true
+  shell: chsh -s $(which zsh) {{ ansible_user_id }}
+
+- name: Check if Oh My Zsh is installed
+  stat:
+    path: ~/.oh-my-zsh
+  register: oh_my_zsh_installed
+
+- name: Download Oh My Zsh installation script
+  when: not oh_my_zsh_installed
+  get_url:
+    url: https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh
+    dest: /tmp/ohmyzsh-install.sh
+    mode: '0755'
+
+- name: Execute the installation script
+  when: not oh_my_zsh_installed
+  shell: /tmp/ohmyzsh-install.sh
+
+- name: Clean up the installation script
+  when: not oh_my_zsh_installed
+  file:
+    path: /tmp/ohmyzsh-install.sh
+    state: absent
+
+- name: Add text block from a file
+  blockinfile:
+    path: ~/.zshrc
+    block: "{{ lookup('file', 'files/zshrc') }}"
+    create: yes
+    state: present

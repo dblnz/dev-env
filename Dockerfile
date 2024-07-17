@@ -1,4 +1,4 @@
-FROM fedora:latest as base
+FROM fedora:latest AS base
 
 ARG USER_NAME
 ARG USER_ID
@@ -24,6 +24,7 @@ RUN sed -i -E "/tsflags=*nodocs/ d" /etc/dnf/dnf.conf; \
 
 RUN dnf -y update \
 	&& dnf -y install \
+		ansible \
 		bash-completion \
 		binutils-devel \
 		bison \
@@ -78,12 +79,7 @@ RUN python3 -m pip install setuptools wheel \
 		requests-unixsocket \
 		retry
 
-FROM base as dev
-
-ADD configs/bash/bashrc ${HOME}/.bashrc
-ADD configs/git/gitconfig ${HOME}/.gitconfig
-ADD configs/tmux/tmux.conf ${HOME}/.tmux.conf
-ADD configs/nvim ${HOME}/.config/nvim
+FROM base AS dev
 
 RUN groupadd -g $GROUP_ID $USER_NAME \
 	; group_name=$(getent group ${GROUP_ID} | cut -d: -f1) \
@@ -101,39 +97,38 @@ RUN echo "Host *github.com\n\tStrictHostKeyChecking no\n" >> /home/${USER_NAME}/
 
 USER ${USER_NAME}
 
+ADD configs ${HOME}/configs
+
+# Tools installation 
+RUN pushd ${HOME}/configs \
+        && whoami \
+        && ansible-playbook playbook.yml -u $USER_NAME \
+        && popd
+
 # Configure GIT signing key
 RUN git config --global commit.gpgsign true
 RUN git config --global gpg.format ssh
 RUN git config --global gpg.ssh.allowedSignersFile ~/.ssh/allowed_signers
 RUN touch ~/.ssh/allowed_signers
-RUN pub_key=$(cat ~/.ssh/id_rsa.pub) \
-	 && email=$(git config user.email) \
-	 && echo "$email $pub_key" > ~/.ssh/allowed_signers \
-	 && git config --global user.signingkey "$pub_key"
 
-# Install Rust
-RUN curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain "${RUST_TOOLCHAIN}" \
-	&& rustup target add x86_64-unknown-linux-musl \
-	&& rustup component add rustfmt \
-	&& rustup component add clippy-preview \
-	&& rustup component add rust-analyzer rust-analysis rust-src \
-	&& mkdir -p "$HOME/tmp" \
-		&& cd "$HOME/tmp" \
-		&& cargo install cargo-audit \
-		&& cargo install cargo-kcov \
-		&& cargo kcov --print-install-kcov-sh | sh \
-	&& cd "$HOME" \
-	&& cargo install cbindgen \
-	&& rm -rf "$HOME/tmp"
+RUN pub_key=$(cat ${HOME}/.ssh/id_rsa.pub) \
+	 && email=$(git config user.email) \
+	 && echo "${email} ${pub_key}" > ${HOME}/.ssh/allowed_signers \
+     && echo $(cat ${HOME}/.ssh/allowed_signers) \
+	 && git config --global user.signingkey "${pub_key}"
+
+FROM dev AS final
+
+RUN mkdir -p $HOME/.tmux/plugins \
+        && git clone https://github.com/tmux-plugins/tpm $HOME/.tmux/plugins/tpm \
+        && bash -c "export TMUX_PLUGIN_MANAGER_PATH=$HOME/.tmux/plugins; $HOME/.tmux/plugins/tpm/bin/install_plugins" \
+        && ln -s /src "$HOME/src"
 
 RUN git clone --depth 1 https://github.com/wbthomason/packer.nvim \
-        ~/.local/share/nvim/site/pack/packer/start/packer.nvim \
+        ~/.local/share/nvim/site/pack/packer/start/packer.nvim \ 
     && nvim --headless -c 'autocmd User PackerComplete quitall' -c 'PackerSync' \
-    && nvim --headless -c "TSUpdate" -c "MasonUpdate" -c "qall" \
-	&& mkdir -p $HOME/.tmux/plugins \
-		&& git clone https://github.com/tmux-plugins/tpm $HOME/.tmux/plugins/tpm \
-		&& bash -c "export TMUX_PLUGIN_MANAGER_PATH=$HOME/.tmux/plugins; $HOME/.tmux/plugins/tpm/bin/install_plugins" \
-	&& ln -s /src "$HOME/src" \
-	&& rm "$HOME/.git-credentials"
+    # First time it throws error
+    || nvim --headless -c 'autocmd User PackerComplete quitall' -c 'PackerSync' \
+    && nvim --headless -c "TSUpdate" -c "MasonUpdate" -c "qall"
 
 WORKDIR "$HOME/src"

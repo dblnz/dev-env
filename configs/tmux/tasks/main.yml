@@ -1,0 +1,12 @@
+---
+# tasks file for tmux
+- name: Check if tmux config exists\
+  stat:
+    path: ~/.tmux.conf
+  register: tmux_installed
+
+- name: Copy tmux config
+  when: not tmux_installed
+  copy:
+    src: files/tmux.conf
+    dest: ~/.tmux.conf

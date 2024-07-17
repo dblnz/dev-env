@@ -1,0 +1,17 @@
+---
+# tasks file for nvim
+- name: Check if Nvim configured
+  stat:
+    path: ~/.config/nvim
+  register: nvim_installed
+
+- name: Install Neovim
+  become: true
+  package:
+    name: neovim
+    state: present
+
+- name: Copy Nvim config
+  copy:
+    src: nvim/
+    dest: ~/.config/nvim/

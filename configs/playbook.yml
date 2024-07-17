@@ -1,0 +1,20 @@
+# playbook.yml
+- hosts: localhost
+  gather_facts: true
+
+  vars:
+    user: "{{ ansible_user_id }}"
+
+  pre_tasks:
+    - name: Test {{ user }}
+      shell: echo {{ user }}
+
+  roles:
+    - bash
+    - git
+    - nvim
+    - rust
+    - tmux
+    - zellij
+    - zsh
+

@@ -1,0 +1,11 @@
+---
+# vars file for test
+components:
+  - rustfmt
+  - clippy-preview
+  - rust-analyzer
+  - rust-analysis
+  - rust-src
+tools:
+  - cargo-audit
+  - cbindgen
