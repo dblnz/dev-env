@@ -27,14 +27,14 @@ vim.keymap.set("n", "<leader>f", function()
 	vim.lsp.buf.format()
 end)
 
+-- Quickfix
 vim.keymap.set("n", "<C-k>", "<cmd>cnext<CR>zz")
 vim.keymap.set("n", "<C-j>", "<cmd>cprev<CR>zz")
 vim.keymap.set("n", "<leader>k", "<cmd>lnext<CR>zz")
 vim.keymap.set("n", "<leader>j", "<cmd>lprev<CR>zz")
 
+-- Replace name
 vim.keymap.set("n", "<leader>s", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]])
 
--- Tabs
-vim.keymap.set("n", "<A-1>", "1gt")
-vim.keymap.set("n", "<A-2>", "2gt")
-vim.keymap.set("n", "<A-3>", "3gt")
+
+

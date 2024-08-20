@@ -18,7 +18,7 @@ vim.opt.backup = false
 vim.opt.undodir = os.getenv("HOME") .. "/.vim/undodir"
 vim.opt.undofile = true
 
-vim.opt.hlsearch = false
+vim.opt.hlsearch = true 
 vim.opt.incsearch = true
 
 vim.opt.termguicolors = true
@@ -41,3 +41,13 @@ vim.opt.textwidth = 80
 vim.opt.wrapmargin = 0
 vim.opt.linebreak = true
 
+-- Folding
+-- The below command starts VIM with indent folding and switches to manual
+-- so one can create new folds using `zf`
+vim.cmd([[
+augroup vimrc
+  au BufReadPre * setlocal foldmethod=indent
+  au BufWinEnter * if &fdm == 'indent' | setlocal foldmethod=manual | endif
+augroup END]])
+vim.opt.foldlevel = 3
+vim.opt.foldclose = all
