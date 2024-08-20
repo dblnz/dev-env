@@ -8,4 +8,6 @@ components:
   - rust-src
 tools:
   - cargo-audit
+  - cargo-shuttle
+  - cargo-watch
   - cbindgen
