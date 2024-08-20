@@ -5,8 +5,28 @@
     path: ~/.tmux.conf
   register: tmux_installed
 
-- name: Copy tmux config
+- name: Install tmux package
   when: not tmux_installed
+  package:
+    name: tmux
+    state: present
+
+- name: Copy tmux config
   copy:
     src: files/tmux.conf
     dest: ~/.tmux.conf
+
+- name: Check if tmux config exists\
+  stat:
+    path: ~/.tmux/plugins/tpm
+  register: plugin_manager_installed
+
+- name: Install tmux plugin manager
+  when: not plugin_manager_installed
+  command: git clone https://github.com/tmux-plugins/tpm $HOME/.tmux/plugins/tpm 
+
+- name: Install tmux plugins
+  when: plugin_manager_installed
+  command: bash -c "export TMUX_PLUGIN_MANAGER_PATH=$HOME/.tmux/plugins;
+    $HOME/.tmux/plugins/tpm/bin/install_plugins"
+
