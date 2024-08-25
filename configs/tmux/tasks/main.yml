@@ -26,7 +26,7 @@
   command: git clone https://github.com/tmux-plugins/tpm $HOME/.tmux/plugins/tpm 
 
 - name: Install tmux plugins
-  when: plugin_manager_installed
+  when: not plugin_manager_installed
   command: bash -c "export TMUX_PLUGIN_MANAGER_PATH=$HOME/.tmux/plugins;
     $HOME/.tmux/plugins/tpm/bin/install_plugins"
 
