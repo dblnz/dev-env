@@ -16,18 +16,18 @@
   register: oh_my_zsh_installed
 
 - name: Download Oh My Zsh installation script
-  when: not oh_my_zsh_installed
+  when: not oh_my_zsh_installed.stat.exists
   get_url:
     url: https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh
     dest: /tmp/ohmyzsh-install.sh
     mode: '0755'
 
 - name: Execute the installation script
-  when: not oh_my_zsh_installed
+  when: not oh_my_zsh_installed.stat.exists
   shell: /tmp/ohmyzsh-install.sh
 
 - name: Clean up the installation script
-  when: not oh_my_zsh_installed
+  when: not oh_my_zsh_installed.stat.exists
   file:
     path: /tmp/ohmyzsh-install.sh
     state: absent

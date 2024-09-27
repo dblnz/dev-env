@@ -10,12 +10,12 @@
       shell: echo {{ user }}
 
   roles:
-    - bash
-    - common
-    - git
-    - nvim
-    - rust
+    #- bash
+    #- common
+    #- git
+    #- nvim
+    #- rust
     - tmux
-    - zellij
-    - zsh
+    #- zellij
+    #- zsh
 
