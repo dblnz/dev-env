@@ -1,0 +1,7 @@
+---
+# tasks file for bash
+- name: Install golang
+  become: true
+  package:
+    name: golang
+    state: present
