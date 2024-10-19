@@ -49,5 +49,5 @@ augroup vimrc
   au BufReadPre * setlocal foldmethod=indent
   au BufWinEnter * if &fdm == 'indent' | setlocal foldmethod=manual | endif
 augroup END]])
-vim.opt.foldlevel = 3
+vim.opt.foldlevel = 4
 vim.opt.foldclose = all
