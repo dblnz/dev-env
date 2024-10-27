@@ -38,3 +38,19 @@
     block: "{{ lookup('file', 'files/zshrc') }}"
     create: yes
     state: present
+
+- name: Install autosuggestions
+  git:
+    repo: https://github.com/zsh-users/zsh-autosuggestions.git 
+    dest: "{{ lookup('ansible.builtin.env', 'ZSH_CUSTOM') }}/plugins/zsh-autosuggestions"
+
+- name: Install syntax-highlighting 
+  git:
+    repo: https://github.com/zsh-users/zsh-syntax-highlighting.git
+    dest: "{{ lookup('ansible.builtin.env', 'ZSH_CUSTOM') }}/plugins/zsh-syntax-highlighting"
+
+- name: Add plugins support in config
+  replace:
+    path: ~/.zshrc
+    regexp: 'plugins=((\w+))'
+    replace: 'plugins=(\1 zsh-autosuggestions zsh-syntax-highlighting)'
