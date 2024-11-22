@@ -39,10 +39,12 @@ return require('packer').startup(function(use)
     }
     use { 'simrat39/rust-tools.nvim' }
     use { "catppuccin/nvim", as = "catppuccin" }
-    use ( "github/copilot.vim", { run = ":Copilot enable" } )
     use { 'nvim-tree/nvim-tree.lua', requires = {
             'nvim-tree/nvim-web-devicons', -- optional
         },
     }
+    use { 'nvim-telescope/telescope-ui-select.nvim' }
+    use { 'nvim-telescope/telescope-fzf-native.nvim',
+        run = 'cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release' }
 end)
 

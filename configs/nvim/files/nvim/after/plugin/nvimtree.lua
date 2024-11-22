@@ -14,14 +14,14 @@ require("nvim-tree").setup({
     sorter = "case_sensitive",
   },
   view = {
-    width = 30,
+    width = 40,
   },
   renderer = {
-    group_empty = true,
+    group_empty = false,
   },
   filters = {
-    dotfiles = true,
+    dotfiles = false,
   },
 })
 
-vim.keymap.set("n", "<leader>t", vim.cmd.NvimTreeToggle)
+vim.keymap.set("n", "<C-t>n", vim.cmd.NvimTreeToggle)

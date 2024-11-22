@@ -1,6 +1,6 @@
 [user]
-	email = blanzeanu.doru@protonmail.com
-	name = Doru-Florin Blanzeanu
+	email = dblnz@pm.me
+	name = Doru Blânzeanu
 [credential]
 	helper = store
 [color]
@@ -15,16 +15,18 @@
 	l = log --decorate --graph --oneline
 	ld = log --decorate --graph --oneline --pretty=format:'%C(bold red)%h%Creset %Cgreen(%cr) %C(bold blue)<%aN>%Creset %s %C(yellow)%d%Creset' --abbrev-commit
 	lg = log --graph --pretty=format:'commit: %C(bold red)%h%Creset %C(red)<%H>%Creset %C(bold magenta)%d %Creset%ndate: %C(bold yellow)%cd %Creset%C(yellow)%cr%Creset%nauthor: %C(bold blue)%an%Creset %C(blue)<%ae>%Creset%n%C(cyan)%s%n%Creset'
-	me = !git lg --author='Doru-Florin Blanzeanu'
+	me = !git lg --author='Doru Blânzeanu'
 [commit]
-gpgsign = true
+	gpgsign = true
 [gpg]
-format = ssh
+	format = ssh
 [core]
-editor = nvim
+	editor = nvim
 [diff]
-tool = vimdiff
-[diftool]
-prompt = false
+	tool = vimdiff
+[difftool]
+	prompt = false
 [pager]
-log = false
+	log = false
+
+>>>>>>> Stashed changes
