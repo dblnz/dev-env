@@ -1,2 +1,2 @@
 
-vim.keymap.set("n", "<C-g>s", vim.cmd.Git)
+vim.keymap.set("n", "<C-t>s", vim.cmd.Git)

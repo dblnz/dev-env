@@ -54,3 +54,4 @@ end)
 vim.keymap.set('n', '<C-f>W', function()
     builtin.grep_string({ search = vim.fn.expand('<cWORD>') });
 end)
+
