@@ -40,14 +40,18 @@
     state: present
 
 - name: Install autosuggestions
+  vars:
+    oh_my_zsh_custom: "{{ lookup('ansible.builtin.env', 'HOME') }}/.oh-myj-zsh/custom"
   git:
     repo: https://github.com/zsh-users/zsh-autosuggestions.git 
-    dest: "{{ lookup('ansible.builtin.env', 'ZSH_CUSTOM') }}/plugins/zsh-autosuggestions"
+    dest: "{{ oh_my_zsh_custom }}/plugins/zsh-autosuggestions"
 
 - name: Install syntax-highlighting 
+  vars:
+    oh_my_zsh_custom: "{{ lookup('ansible.builtin.env', 'HOME') }}/.oh-myj-zsh/custom"
   git:
     repo: https://github.com/zsh-users/zsh-syntax-highlighting.git
-    dest: "{{ lookup('ansible.builtin.env', 'ZSH_CUSTOM') }}/plugins/zsh-syntax-highlighting"
+    dest: "{{ oh_my_zsh_custom }}/plugins/zsh-syntax-highlighting"
 
 - name: Add plugins support in config
   replace:
