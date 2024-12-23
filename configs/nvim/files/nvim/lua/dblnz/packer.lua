@@ -48,6 +48,7 @@ return require('packer').startup(function(use)
         run = 'cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release'
     }
     use "sindrets/diffview.nvim"
+    use "lewis6991/gitsigns.nvim"
 
 end)
 
