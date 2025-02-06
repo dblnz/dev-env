@@ -1,4 +1,6 @@
 
+vim.opt.spell = true
+vim.opt.spelllang = "en"
 vim.opt.guicursor = ""
 
 vim.opt.nu = true
