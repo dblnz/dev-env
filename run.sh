@@ -62,7 +62,7 @@ main() {
 		--workdir "$ctr_src_dir" \
 		-e "TERM=xterm-256color" \
 		-e "SHELL=/bin/bash" \
-		$CTR_NAME:latest bash
+        $CTR_NAME bash
 }
 
 main "$@"

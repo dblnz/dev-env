@@ -3,7 +3,7 @@ name: Deploy container image
 on:
   push:
     branches:
-      - "develop"
+      - "main"
     paths:
       - "Dockerfile"
       - ".github/workflows/deploy_ctr_image.yml"

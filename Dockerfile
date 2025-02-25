@@ -91,13 +91,5 @@ RUN pushd ${HOME}/configs \
 # Configure GIT signing key
 RUN git config --global commit.gpgsign true
 RUN git config --global gpg.format ssh
-RUN git config --global gpg.ssh.allowedSignersFile ~/.ssh/allowed_signers
-RUN touch ~/.ssh/allowed_signers
-
-RUN pub_key=$(cat ${HOME}/.ssh/id_rsa.pub) \
-	 && email=$(git config user.email) \
-	 && echo "${email} ${pub_key}" > ${HOME}/.ssh/allowed_signers \
-     && echo $(cat ${HOME}/.ssh/allowed_signers) \
-	 && git config --global user.signingkey "${pub_key}"
 
 WORKDIR "$HOME/src"

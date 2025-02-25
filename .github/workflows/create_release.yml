@@ -5,14 +5,12 @@ on:
     tags:
       - v*
 
-permissions:
-  contents: write
-
-
 jobs:
   release:
-    name: Release pushed tag
+    name: Release tag
     runs-on: ubuntu-22.04
+    permissions:
+      contents: write
     steps:
       - name: Create release
         env:
