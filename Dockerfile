@@ -3,8 +3,7 @@ FROM fedora:latest AS base
 ARG USER_NAME
 ARG USER_ID
 ARG GROUP_ID
-ARG RUST_TOOLCHAIN="stable"
-ARG GO_VERSION="1.24.3"
+ARG GO_VERSION="1.24.0"
 ARG HOSTNAME=dev
 
 ENV HOME=/home/${USER_NAME}
@@ -78,10 +77,6 @@ RUN groupadd -g $GROUP_ID $USER_NAME \
 	&& chown -R "${USER_NAME}:$group_name" /home/${USER_NAME} \
 	&& echo "${USER_NAME} ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers \
 	&& curl "https://dl.google.com/go/go${GO_VERSION}.linux-amd64.tar.gz" | tar -C /usr/local -zx
-
-# Copy generated key for git ssh connection
-RUN group_name=$(getent group ${GROUP_ID} | cut -d: -f1) && chown -R ${USER_NAME}:$group_name /home/${USER_NAME}/.ssh
-RUN echo "Host *github.com\n\tStrictHostKeyChecking no\n" >> /home/${USER_NAME}/.ssh/config
 
 USER ${USER_NAME}
 
