@@ -23,7 +23,7 @@
 
 - name: Clone tmux plugin manager
   when: not plugin_manager_installed.stat.exists
-  command: git clone https://github.com/tmux-plugins/tpm $HOME/.tmux/plugins/tpm 
+  command: git clone --depth 1 https://github.com/tmux-plugins/tpm $HOME/.tmux/plugins/tpm 
 
 - name: Install tmux plugins
   when: not plugin_manager_installed.stat.exists

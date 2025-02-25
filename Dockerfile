@@ -3,9 +3,8 @@ FROM fedora:latest AS base
 ARG USER_NAME
 ARG USER_ID
 ARG GROUP_ID
-ARG GIT_KEY="id_github_rsa_4096_0"
 ARG RUST_TOOLCHAIN="stable"
-ARG GO_VERSION="1.21.9"
+ARG GO_VERSION="1.24.3"
 ARG HOSTNAME=dev
 
 ENV HOME=/home/${USER_NAME}
@@ -13,14 +12,6 @@ ENV GOPATH="/usr/local/gopath"
 ENV PATH="$HOME/.cargo/bin:/usr/local/go/bin:${GOPATH}/bin:$PATH"
 ENV EDITOR=nvim
 ENV LANG="C.UTF-8"
-
-RUN sed -i -E "/tsflags=*nodocs/ d" /etc/dnf/dnf.conf; \
-	dnf -y reinstall \
-		curl \
-		openssh-clients \
-		openssl \
-		pkgconf \
-		tar
 
 RUN dnf -y update \
 	&& dnf -y install \
@@ -88,10 +79,7 @@ RUN groupadd -g $GROUP_ID $USER_NAME \
 	&& echo "${USER_NAME} ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers \
 	&& curl "https://dl.google.com/go/go${GO_VERSION}.linux-amd64.tar.gz" | tar -C /usr/local -zx
 
-
 # Copy generated key for git ssh connection
-COPY ${GIT_KEY} /home/${USER_NAME}/.ssh/id_rsa
-COPY ${GIT_KEY}.pub /home/${USER_NAME}/.ssh/id_rsa.pub
 RUN group_name=$(getent group ${GROUP_ID} | cut -d: -f1) && chown -R ${USER_NAME}:$group_name /home/${USER_NAME}/.ssh
 RUN echo "Host *github.com\n\tStrictHostKeyChecking no\n" >> /home/${USER_NAME}/.ssh/config
 
@@ -116,19 +104,5 @@ RUN pub_key=$(cat ${HOME}/.ssh/id_rsa.pub) \
 	 && echo "${email} ${pub_key}" > ${HOME}/.ssh/allowed_signers \
      && echo $(cat ${HOME}/.ssh/allowed_signers) \
 	 && git config --global user.signingkey "${pub_key}"
-
-FROM dev AS final
-
-RUN mkdir -p $HOME/.tmux/plugins \
-        && git clone https://github.com/tmux-plugins/tpm $HOME/.tmux/plugins/tpm \
-        && bash -c "export TMUX_PLUGIN_MANAGER_PATH=$HOME/.tmux/plugins; $HOME/.tmux/plugins/tpm/bin/install_plugins" \
-        && ln -s /src "$HOME/src"
-
-RUN git clone --depth 1 https://github.com/wbthomason/packer.nvim \
-        ~/.local/share/nvim/site/pack/packer/start/packer.nvim \ 
-    && nvim --headless -c 'autocmd User PackerComplete quitall' -c 'PackerSync' \
-    # First time it throws error
-    || nvim --headless -c 'autocmd User PackerComplete quitall' -c 'PackerSync' \
-    && nvim --headless -c "TSUpdate" -c "MasonUpdate" -c "qall"
 
 WORKDIR "$HOME/src"
