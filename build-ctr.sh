@@ -10,11 +10,10 @@ build_container() {
     GROUP_ID=$3
 
 	docker build \
-		-t "$CTR_NAME:latest" \
-        --build-arg CONFIGS_DIR="${CONFIGS_DIR}" \
-		--build-arg USER_NAME=${USER_NAME} \
-		--build-arg USER_ID=${USER_ID} \
-		--build-arg GROUP_ID=${GROUP_ID} \
+		-t "$LOCAL_CTR_NAME" \
+		--build-arg USER_NAME="${USER_NAME}" \
+		--build-arg USER_ID="${USER_ID}" \
+		--build-arg GROUP_ID="${GROUP_ID}" \
         .
 
 	ok_or_die "ERROR: Container build failed"
@@ -27,7 +26,7 @@ main() {
         build_container "$@"
     elif [[ $# -eq 0 ]]; then
         # Build the container with the current user
-        build_container "$CTR_CONTEXT_DIR" "$(whoami)" "$(id -u)" "$(id -g)"
+        build_container "$(whoami)" "$(id -u)" "$(id -g)"
     else
         die "Usage: $0 [CONFIGS_DIR USER_NAME USER_ID GROUP_ID]"
     fi

@@ -3,12 +3,15 @@ name: Deploy container image
 on:
   push:
     branches: [main]
-    pull_request:
-      branches: [main]
     paths:
       - "Dockerfile"
       - ".github/workflows/deploy_ctr_image.yml"
-    workflow_dispatch:
+  pull_request:
+    branches: [main]
+    paths:
+      - "Dockerfile"
+      - ".github/workflows/deploy_ctr_image.yml"
+  workflow_dispatch:
 
 env:
   REGISTRY: ghcr.io
@@ -44,7 +47,23 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
-      - name: Build and push Docker image
+      - name: Build Docker image
+        id: build
+        uses: docker/build-push-action@v6
+        with:
+          push: false
+          tags: |
+            ${{ steps.meta.outputs.tags }}
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+          labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            USER_NAME=${{ env.USER_NAME }}
+            USER_ID=${{ env.USER_ID }}
+            GROUP_ID=${{ env.GROUP_ID }}
+            GO_VERSION=${{ env.GO_VERSION }}
+            HOSTNAME=${{ runner.HOSTNAME }}
+
+      - name: Push Docker image
         id: push
         uses: docker/build-push-action@v6
         if: ${{ github.ref == 'refs/heads/main' }}
