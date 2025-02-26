@@ -27,6 +27,14 @@
   args:
     executable: /bin/bash
 
+- name: Install target
+  shell: source /etc/profile && rustup target add {{ item }}
+  loop: "{{ targets }}"
+  tags:
+    - rust
+  args:
+    executable: /bin/bash
+
 - name: Install tool
   shell: source /etc/profile && cargo install {{ item }}
   loop: "{{ tools }}"
