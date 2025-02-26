@@ -3,8 +3,14 @@
 # Get Environment
 source env.sh
 
-SRC_DIR="$CURRENT_DIR/src"
+SRC_DIR="$CURRENT_DIR"
 CTR_SRC_DIR=/src
+
+LOCAL=${LOCAL:-false}
+
+if [[ "$LOCAL" -eq 1 ]]; then
+    REMOTE_CTR_NAME=$LOCAL_CTR_NAME
+fi
 
 main() {
 	local opt_attach
@@ -34,7 +40,7 @@ main() {
 	[[ -d "$src_dir" ]] || die "Error: $src_dir - not a valid directory"
 
 	# Try to attach to running ctr
-	ctr_id=$(docker ps --filter "label=$CTR_NAME" --filter "volume=$src_dir" --format "{{.ID}}")
+	ctr_id=$(docker ps --filter "label=$REMOTE_CTR_NAME" --filter "volume=$src_dir" --format "{{.ID}}")
 	if [[ -n "$ctr_id" ]]; then
 		if [[ "$opt_attach" = true ]]; then
 			echo "Attaching to running container $ctr_id ..."
@@ -47,7 +53,7 @@ main() {
 	fi
 
 	# Start new container
-	echo "Running $CTR_NAME:latest ..."
+	echo "Running $REMOTE_CTR_NAME ..."
 	echo "Bind-mounting sources from $src_dir to $ctr_src_dir ..."
 	echo ""
 	docker run -it --rm \
@@ -57,12 +63,12 @@ main() {
 		--privileged \
 		--security-opt seccomp=unconfined \
 		--ulimit core=0 \
-		--hostname "$CTR_NAME" \
-		--label "$CTR_NAME" \
+		--hostname "$REMOTE_CTR_NAME" \
+		--label "$REMOTE_CTR_NAME" \
 		--workdir "$ctr_src_dir" \
 		-e "TERM=xterm-256color" \
 		-e "SHELL=/bin/bash" \
-        $CTR_NAME bash
+        "$REMOTE_CTR_NAME" bash
 }
 
 main "$@"
