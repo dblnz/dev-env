@@ -1,0 +1,11 @@
+---
+# tasks file for zellij
+- name: Check zellij is installed
+  shell: command -v zellij
+  register: zellij_installed
+  ignore_errors: yes
+
+- name: Install Zellij via Cargo
+  when: not zellij_installed
+  command:
+    cmd: cargo install zellij

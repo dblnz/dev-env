@@ -1,0 +1,29 @@
+---
+# tasks file for nvim
+- name: Check if Nvim configured
+  stat:
+    path: ~/.config/nvim
+  register: nvim_installed
+
+- name: Install Neovim
+  become: true
+  package:
+    name: neovim
+    state: present
+
+- name: Copy Nvim config
+  copy:
+    src: nvim/
+    dest: ~/.config/nvim/
+
+- name: Install Packer plugin
+  command: git clone 'https://github.com/wbthomason/packer.nvim' "~/.local/share/nvim/site/pack/packer/start/packer.nvim"
+
+- name: Install nvim packer plugins
+  shell: |
+    nvim --headless -c 'autocmd User PackerComplete quitall' -c 'PackerSync'
+    # First time it throws error
+    nvim --headless -c 'autocmd User PackerComplete quitall' -c 'PackerSync'
+    nvim --headless -c "TSUpdate" -c "MasonUpdate" -c "qall"
+    nvim --headless -c "MasonUpdate" -c "qall"
+

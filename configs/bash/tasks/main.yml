@@ -1,0 +1,6 @@
+---
+# tasks file for bash
+- name: Copy Bash config
+  copy:
+    src: bashrc
+    dest: ~/.bashrc
