@@ -1,0 +1,13 @@
+---
+# vars file
+tools:
+  - cmake
+  - fd-find
+  - fzf
+  - gcc
+  - golang
+  - make
+  - python3
+  - default-jdk
+  - default-jre
+  - ripgrep

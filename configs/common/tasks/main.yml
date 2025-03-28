@@ -1,7 +1,8 @@
 ---
-# tasks file for bash
-- name: Install golang
+# tasks file for common tools
+- name: Install {{ item }}
   become: true
+  loop: "{{ tools }}"
   package:
-    name: golang
+    name: "{{ item }}"
     state: present
