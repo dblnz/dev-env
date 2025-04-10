@@ -1,4 +1,2 @@
-require("dblnz.set")
-require("dblnz.remap")
-require("dblnz.packer")
+require("dblnz.config.lazy")
 

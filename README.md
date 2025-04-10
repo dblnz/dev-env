@@ -13,13 +13,11 @@ Development Tools:
 - Docker
 - git configuration
 - golang
-- neovim - text editor with packer plugins
-    - fugitive
-    - harpoon    - bookmarks files for easy switch between files
+- neovim - text editor with LazyVim package manager
+    - LazyVim
     - lsp        - language server plugin
-    - nvim-tree  - directory tree pane
+    - snacks
     - telescope  - fuzzy finder
-    - treesitter - syntax highlighter
     - undo-tree  - file history
 - rust programming language with multiple tools
 - tmux - terminal multiplexer
