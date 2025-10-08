@@ -1,0 +1,57 @@
+{ config, pkgs, lib, ... }:
+
+{
+  programs.neovim = {
+    enable = true;
+    
+    # Use neovim as the default editor
+    defaultEditor = true;
+    
+    # Enable vi/vim aliases
+    viAlias = true;
+    vimAlias = true;
+    vimdiffAlias = true;
+
+    # Neovim configuration
+    # You can either:
+    # 1. Manage your config here in Nix (declarative)
+    # 2. Point to your existing lua config (current approach below)
+    
+    extraLuaConfig = ''
+      -- Your lua config will be loaded from ~/.config/nvim
+      -- This is just a placeholder for any additional Nix-managed config
+    '';
+
+    # Neovim plugins managed by Nix (optional)
+    # You can keep using lazy.nvim or migrate plugins here
+    plugins = with pkgs.vimPlugins; [
+      # Example: Core plugins you always want
+      # plenary-nvim
+      # nvim-web-devicons
+    ];
+
+    # Additional packages available to Neovim
+    extraPackages = with pkgs; [
+      # LSP servers
+      lua-language-server
+      nil  # Nix LSP
+      # Add more as needed from your Mason setup
+      
+      # Formatters
+      stylua
+      nixpkgs-fmt
+      
+      # Other tools
+      ripgrep
+      fd
+      tree-sitter
+    ];
+  };
+
+  # Copy your existing neovim configuration
+  # This preserves your LazyVim setup
+  xdg.configFile."nvim" = {
+    source = ../configs/nvim/files/nvim;
+    recursive = true;
+  };
+}
