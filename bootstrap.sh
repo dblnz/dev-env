@@ -15,6 +15,7 @@ NC='\033[0m' # No Color
 if [[ "$OSTYPE" == "linux-gnu"* ]]; then
     OS="linux"
     PROFILE="dblnz@linux"
+    PROFILE="azureuser"
 elif [[ "$OSTYPE" == "darwin"* ]]; then
     OS="darwin"
     if [[ $(uname -m) == "arm64" ]]; then

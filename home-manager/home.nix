@@ -3,12 +3,13 @@
 {
   # Import all module configurations
   imports = [
-    ./modules/git.nix
-    ./modules/zsh.nix
     ./modules/bash.nix
-    ./modules/tmux.nix
-    ./modules/common-packages.nix
     ./modules/cli-tools.nix
+    ./modules/common-packages.nix
+    ./modules/neovim.nix
+    ./modules/git.nix
+    ./modules/tmux.nix
+    ./modules/zsh.nix
   ];
 
   # Let Home Manager manage itself

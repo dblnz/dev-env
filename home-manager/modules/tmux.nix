@@ -20,7 +20,7 @@
     baseIndex = 1;
     
     # Renumber windows when one is closed
-    renumberWindows = true;
+    #renumberWindows = true;
     
     # Increase scrollback buffer size
     historyLimit = 50000;
@@ -76,29 +76,29 @@
     '';
 
     # Plugins
-    plugins = with pkgs.tmuxPlugins; [
-      sensible
-      yank
-      {
-        plugin = tmux-themepack;
-        extraConfig = ''
-          set -g @themepack 'powerline/default/cyan'
-        '';
-      }
-      {
-        plugin = resurrect;
-        extraConfig = ''
-          set -g @resurrect-strategy-nvim 'session'
-          set -g @resurrect-capture-pane-contents 'on'
-        '';
-      }
-      {
-        plugin = continuum;
-        extraConfig = ''
-          set -g @continuum-restore 'on'
-          set -g @continuum-save-interval '15'
-        '';
-      }
-    ];
+    #plugins = with pkgs.tmuxPlugins; [
+    #  sensible
+    #  yank
+    #  {
+    #    plugin = tmux-themepack;
+    #    extraConfig = ''
+    #      set -g @themepack 'powerline/default/cyan'
+    #    '';
+    #  }
+    #  {
+    #    plugin = resurrect;
+    #    extraConfig = ''
+    #      set -g @resurrect-strategy-nvim 'session'
+    #      set -g @resurrect-capture-pane-contents 'on'
+    #    '';
+    #  }
+    #  {
+    #    plugin = continuum;
+    #    extraConfig = ''
+    #      set -g @continuum-restore 'on'
+    #      set -g @continuum-save-interval '15'
+    #    '';
+    #  }
+    #];
   };
 }

@@ -16,7 +16,7 @@
     gh  # GitHub CLI
     
     # Editors
-    neovim
+    #neovim
     
     # Shell utilities
     bat        # Better cat

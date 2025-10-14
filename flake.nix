@@ -8,6 +8,13 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    # Optional: Neovim configuration from git repository
+    # Uncomment and update the URL to your nvim config repo:
+    # nvim-config = {
+    #   url = "github:yourusername/nvim-config";
+    #   flake = false;  # Not a flake, just files
+    # };
   };
 
   outputs = { self, nixpkgs, home-manager, ... }@inputs: 
@@ -27,6 +34,10 @@
                 inherit username homeDirectory;
                 stateVersion = "24.05";
               };
+              # Pass the nvim-config input to modules if it exists
+              _module.args = {
+                nvim-config = inputs.nvim-config or null;
+              };
             }
           ] ++ extraModules;
         };
@@ -35,10 +46,10 @@
       # Home Manager configurations for different systems
       homeConfigurations = {
         # Linux configuration
-        "dblnz@linux" = mkHome {
+        "azureuser" = mkHome {
           system = "x86_64-linux";
-          username = "dblnz";
-          homeDirectory = "/home/dblnz";
+          username = "azureuser";
+          homeDirectory = "/home/azureuser";
           extraModules = [ ./home-manager/linux.nix ];
         };
 

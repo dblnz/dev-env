@@ -43,7 +43,7 @@
     };
 
     # Additional shell options
-    initExtra = ''
+    initContent = ''
       # Bind Ctrl-Space to accept autosuggestion
       bindkey '^ ' autosuggest-accept
 

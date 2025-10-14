@@ -13,7 +13,7 @@
       "--header"
     ];
     git = true;
-    icons = true;
+    icons = "auto";
   };
 
   # Bat (cat with syntax highlighting)
