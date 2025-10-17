@@ -1,8 +1,0 @@
-export PATH=$HOME/bin:$HOME/.local/bin:/usr/local/bin:$PATH
-
-export PATH="$PATH:/opt/nvim-linux64/bin"
-source "$HOME/.cargo/env"
-
-# Bind Ctrl-Space to accept suggestion
-bindkey '^ ' autosuggest-accept
-

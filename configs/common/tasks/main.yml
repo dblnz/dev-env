@@ -1,8 +1,0 @@
----
-# tasks file for common tools
-- name: Install {{ item }}
-  become: true
-  loop: "{{ tools }}"
-  package:
-    name: "{{ item }}"
-    state: present
