@@ -36,10 +36,27 @@
         "type": "github"
       }
     },
+    "nvim-config": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1757955973,
+        "narHash": "sha256-NtwzHRLxya8gHBqWcXUgyfnBivyahYO4/0BAFNWPCgM=",
+        "owner": "dblnz",
+        "repo": "nvim-dotfiles",
+        "rev": "3462ab56a652254b8d4dd52216e32a3cfb4e5d75",
+        "type": "github"
+      },
+      "original": {
+        "owner": "dblnz",
+        "repo": "nvim-dotfiles",
+        "type": "github"
+      }
+    },
     "root": {
       "inputs": {
         "home-manager": "home-manager",
-        "nixpkgs": "nixpkgs"
+        "nixpkgs": "nixpkgs",
+        "nvim-config": "nvim-config"
       }
     }
   },

@@ -3,18 +3,16 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
-    
+
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # Optional: Neovim configuration from git repository
-    # Uncomment and update the URL to your nvim config repo:
-    # nvim-config = {
-    #   url = "github:yourusername/nvim-config";
-    #   flake = false;  # Not a flake, just files
-    # };
+    nvim-config = {
+      url = "github:dblnz/nvim-dotfiles";
+      flake = false;
+    };
   };
 
   outputs = { self, nixpkgs, home-manager, ... }@inputs: 
@@ -26,7 +24,7 @@
             inherit system;
             config.allowUnfree = true;
           };
-          
+
           modules = [
             ./home-manager/home.nix
             {
@@ -36,7 +34,7 @@
               };
               # Pass the nvim-config input to modules if it exists
               _module.args = {
-                nvim-config = inputs.nvim-config or null;
+                nvim-config = inputs.nvim-config;
               };
             }
           ] ++ extraModules;

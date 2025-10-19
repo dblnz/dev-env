@@ -3,7 +3,7 @@
 {
   programs.bash = {
     enable = true;
-    
+
     enableCompletion = true;
 
     # Bash history configuration
@@ -20,7 +20,7 @@
       la = "ls -la";
       ".." = "cd ..";
       "..." = "cd ../..";
-      
+
       # Git shortcuts
       g = "git";
       gs = "git status";

@@ -6,14 +6,11 @@ This repository contains my personal development environment configuration using
 
 ```bash
 # Clone this repo
-git clone <your-repo> ~/dotfiles
-cd ~/dotfiles
+git clone <repo-url> ~/dev-env
+cd ~/dev-env
 
 # Bootstrap everything (installs Nix if needed)
 ./bootstrap.sh
-
-# Or use Makefile
-make bootstrap
 ```
 
 That's it! Your environment is now configured with:
@@ -24,9 +21,6 @@ That's it! Your environment is now configured with:
 - Modern CLI tools (bat, eza, ripgrep, fd, fzf, etc.)
 - Starship prompt
 - Direnv for per-project environments
-
-**Read [NIX_README.md](NIX_README.md) for detailed documentation.**  
-**See [QUICK_REFERENCE.md](QUICK_REFERENCE.md) for command cheatsheet.**
 
 ---
 
@@ -44,25 +38,18 @@ That's it! Your environment is now configured with:
 Create language-specific development environments:
 
 ```bash
-# Initialize a new project
-make init-rust DIR=my-rust-project
-make init-node DIR=my-node-app
-make init-python DIR=my-python-project
+# From a new or empty project directory, initialize a template
+# If this repo is cloned locally
+nix flake init -t ~/dev-env#rust
 
-# Or manually
-nix flake init -t .#rust
-nix develop  # Enter dev environment
+# Or directly from GitHub
+nix flake init -t github:dblnz/dev-env#rust
+
+# Enter the dev environment
+nix develop
 ```
 
 Available templates: `rust`, `c`, `node`, `python`, `go`
-
----
-
-## Documentation
-
-- **[NIX_README.md](NIX_README.md)** - Complete Nix setup guide
-- **[QUICK_REFERENCE.md](QUICK_REFERENCE.md)** - Command cheatsheet
-- **[Makefile](Makefile)** - Common operations (`make help`)
 
 ---
 

@@ -3,7 +3,7 @@
 {
   programs.zsh = {
     enable = true;
-    
+
     enableCompletion = true;
     autosuggestion.enable = true;
     syntaxHighlighting.enable = true;
@@ -27,7 +27,7 @@
       la = "ls -la";
       ".." = "cd ..";
       "..." = "cd ../..";
-      
+
       # Git shortcuts (in addition to git aliases)
       g = "git";
       gs = "git status";
@@ -36,7 +36,7 @@
       gc = "git commit";
       gp = "git push";
       gl = "git pull";
-      
+
       # Nix shortcuts
       hms = "home-manager switch --flake .";
       hmb = "home-manager build --flake .";
@@ -77,6 +77,8 @@
         "colored-man-pages"
         "command-not-found"
         "history-substring-search"
+        "zsh-autosuggestions"
+        "zsh-syntax-highlighting"
       ];
       theme = "robbyrussell";  # Can be customized
     };

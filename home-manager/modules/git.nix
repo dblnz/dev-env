@@ -3,7 +3,7 @@
 {
   programs.git = {
     enable = true;
-    
+
     settings = {
       user = {
         name = "Doru Blânzeanu";
@@ -11,29 +11,29 @@
       };
 
       credential.helper = "store";
-      
+
       color.ui = "auto";
-      
+
       commit = {
         gpgsign = true;
       };
-      
+
       gpg = {
         format = "ssh";
       };
-      
+
       core = {
         editor = "nvim";
       };
-      
+
       diff = {
         tool = "vimdiff";
       };
-      
+
       difftool = {
         prompt = false;
       };
-      
+
       pager = {
         log = false;
       };
@@ -55,11 +55,8 @@
         l = "log --decorate --graph --oneline";
 
         dag = "log --graph --format='format:%C(yellow)%h%C(reset) %C(blue)\"%an\" <%ae>%C(reset) %C(magenta)%cr%C(reset)%C(auto)%d%C(reset)%n%s' --date-order";
-
         ld = "log --decorate --graph --oneline --pretty=format:'%C(bold red)%h%Creset %Cgreen(%cr) %C(bold blue)<%aN>%Creset %s %C(yellow)%d%Creset' --abbrev-commit";
-
         lg = "log --graph --pretty=format:'commit: %C(bold red)%h%Creset %C(red)<%H>%Creset %C(bold magenta)%d %Creset%ndate: %C(bold yellow)%cd %Creset%C(yellow)%cr%Creset%nauthor: %C(bold blue)%an%Creset %C(blue)<%ae>%Creset%n%C(cyan)%s%n%Creset'";
-
         me = "!git lg --author='Doru Blânzeanu'";
       };
     };

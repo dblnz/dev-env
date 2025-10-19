@@ -2,7 +2,7 @@
 
 {
   # macOS-specific configuration
-  
+
   home.packages = with pkgs; [
     # macOS-specific tools
   ];
