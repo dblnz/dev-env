@@ -12,6 +12,7 @@
 
     # Compilers/Interpretors
     go
+    lua
     nodejs_24
     typescript
 
