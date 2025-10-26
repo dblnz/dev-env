@@ -77,8 +77,6 @@
         "colored-man-pages"
         "command-not-found"
         "history-substring-search"
-        "zsh-autosuggestions"
-        "zsh-syntax-highlighting"
       ];
       theme = "robbyrussell";  # Can be customized
     };

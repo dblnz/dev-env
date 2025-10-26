@@ -4,6 +4,12 @@ Minimal instructions to get started, use templates, manage Home Manager, and rol
 
 ## Quick start
 
+If you have `nix` installed:
+```sh
+nix run home-manager/master -- switch --flake github:dblnz/dev-env#dblnz@linux -b backup
+```
+
+If not you can use:
 ```sh
 git clone <repo-url> ~/dev-env
 cd ~/dev-env
