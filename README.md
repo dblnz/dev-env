@@ -1,71 +1,58 @@
-# Development Setup
+# Development Setup (Nix + Home Manager)
 
-This repository contains my personal development setup.
+Minimal instructions to get started, use templates, manage Home Manager, and roll back if needed.
 
-The setup is based on a container in which all the needed
-tools are installed.
+## Quick start
 
-The tools configuration can be used to setup local machine or other hosts by
-using `ansible`.
-
-Development Tools:
-- bash configuration
-- Docker
-- git configuration
-- golang
-- neovim - text editor with LazyVim package manager
-    - LazyVim
-    - lsp        - language server plugin
-    - snacks
-    - telescope  - fuzzy finder
-    - undo-tree  - file history
-- rust programming language with multiple tools
-- tmux - terminal multiplexer
-- zellij - terminal multiplexer
-- zsh - shell
-    - oh-my-zsh
-    - zsh-autosuggestions
-    - zsh-syntax-highlighting
-
-## Configure localhost using ansible
-
-```bash
-$ cd configs
-$ ansible-playbook playbook.yml --ask-become-pass
+```sh
+git clone <repo-url> ~/dev-env
+cd ~/dev-env
+./bootstrap.sh
 ```
 
-Vim commands:
-- :PackerSync
-- :MasonUpdate
-- :TsUpdate
+The bootstrap script installs Nix if needed, enables flakes, and activates the appropriate Home Manager profile for your OS.
 
-## Build/Run in docker container
+## Use project templates
 
-The following command will build the container locally and install all needed
-tools on it.
+From a new or empty project directory:
+
+```sh
+# If cloned locally
+nix flake init -t ~/dev-env#rust
+
+# Or directly from GitHub
+nix flake init -t github:dblnz/dev-env#rust
+
+# Enter the dev environment
+nix develop
 ```
-$ ./build-ctr.sh
+
+Available templates: rust, c, node, python, go
+
+## Manage with Home Manager
+
+Apply changes again later using the same profile that bootstrap selected:
+
+```sh
+cd ~/dev-env
+# Linux
+home-manager switch --flake .#dblnz@linux
+# macOS (Apple Silicon)
+home-manager switch --flake .#dblnz@darwin
+# macOS (Intel)
+home-manager switch --flake .#dblnz@darwin-intel
 ```
 
-Run the following command to start the remote container:
+Build without switching (evaluation/build only):
+
+```sh
+home-manager build --flake .#dblnz@linux   # or the matching profile for your OS
 ```
-$ ./run.sh
-```
 
-Set the following environment variables to configure the container:
-- `LOCAL` - set to `1` to use the locally built container instead of the
-  remote one
+## Roll back
 
-One can provide the `<src_dir>:<dest_dir>` parameter for a local
-directory to be mapped on the container. Otherwise, the current directory
-will be mapped to `/src` container directory.
+If something goes wrong, roll back to the previous Home Manager generation:
 
-## Configurations
-
-### Fonts
-
-Requires nerd-fonts-hack intallation
-
-```powershell
-$ choco install nerd-fonts-hack
+```sh
+home-manager switch --rollback
 ```

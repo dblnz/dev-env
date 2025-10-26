@@ -1,6 +1,0 @@
----
-# tasks file for git
-- name: Copy Git config
-  copy:
-    src: gitconfig
-    dest: ~/.gitconfig
