@@ -1,45 +1,23 @@
-# Development Setup
+# Development Setup (Nix + Home Manager)
 
-This repository contains my personal development environment configuration using **Nix and Home Manager** for cross-platform compatibility (Linux and macOS).
+Minimal instructions to get started, use templates, manage Home Manager, and roll back if needed.
 
-## Quick Start (New Nix Setup)
+## Quick start
 
-```bash
-# Clone this repo
+```sh
 git clone <repo-url> ~/dev-env
 cd ~/dev-env
-
-# Bootstrap everything (installs Nix if needed)
 ./bootstrap.sh
 ```
 
-That's it! Your environment is now configured with:
-- Git configuration with aliases and GPG signing
-- Zsh with Oh-My-Zsh, plugins, and modern tools
-- Bash with custom prompt and aliases
-- Tmux with vim-style navigation and themes
-- Modern CLI tools (bat, eza, ripgrep, fd, fzf, etc.)
-- Starship prompt
-- Direnv for per-project environments
+The bootstrap script installs Nix if needed, enables flakes, and activates the appropriate Home Manager profile for your OS.
 
----
+## Use project templates
 
-## Development Tools Included
+From a new or empty project directory:
 
-- **Shell**: zsh (with oh-my-zsh), bash
-- **Terminal Multiplexers**: tmux, zellij
-- **Editor**: neovim (LazyVim-based config via Home Manager)
-- **Version Control**: git with delta diff viewer
-- **CLI Tools**: bat, eza, ripgrep, fd, fzf, htop, btop, jq, yq
-- **Dev Environments**: Project templates for Rust, C/C++, Node.js, Python, Go
-
-## Project Templates
-
-Create language-specific development environments:
-
-```bash
-# From a new or empty project directory, initialize a template
-# If this repo is cloned locally
+```sh
+# If cloned locally
 nix flake init -t ~/dev-env#rust
 
 # Or directly from GitHub
@@ -49,121 +27,32 @@ nix flake init -t github:dblnz/dev-env#rust
 nix develop
 ```
 
-Available templates: `rust`, `c`, `node`, `python`, `go`
+Available templates: rust, c, node, python, go
 
----
+## Manage with Home Manager
 
-## Home Manager: activate and update (azureuser)
-
-Use these commands if you want to manage your local user environment directly with Home Manager and this flake.
-
-### Initial setup on Linux (azureuser)
-
-Recommended (bootstrap script):
-
-```sh
-git clone <repo-url> ~/dev-env
-cd ~/dev-env
-./bootstrap.sh
-```
-
-Manual (if you prefer explicit steps):
-
-```sh
-# 1) Install Nix (multi-user on Linux)
-sh <(curl -L https://nixos.org/nix/install) --daemon
-
-# 2) Enable flakes (once)
-mkdir -p ~/.config/nix
-grep -q 'experimental-features' ~/.config/nix/nix.conf || echo 'experimental-features = nix-command flakes' >> ~/.config/nix/nix.conf
-
-# 3) Activate the Home Manager profile for azureuser
-cd ~/dev-env
-nix run home-manager/master -- switch --flake .#azureuser -b backup
-
-# 4) Load session vars for the current shell (or open a new shell)
-source ~/.nix-profile/etc/profile.d/hm-session-vars.sh
-```
-
-### Update this machine from the repo
+Apply changes again later using the same profile that bootstrap selected:
 
 ```sh
 cd ~/dev-env
-git pull
-home-manager switch --flake .#azureuser
+# Linux
+home-manager switch --flake .#dblnz@linux
+# macOS (Apple Silicon)
+home-manager switch --flake .#dblnz@darwin
+# macOS (Intel)
+home-manager switch --flake .#dblnz@darwin-intel
 ```
 
-### Update inputs (nixpkgs, etc.), commit, and apply
+Build without switching (evaluation/build only):
 
 ```sh
-cd ~/dev-env
-nix flake update
-git commit -am "flake: update"
-home-manager switch --flake .#azureuser
+home-manager build --flake .#dblnz@linux   # or the matching profile for your OS
 ```
 
-### Useful commands
+## Roll back
+
+If something goes wrong, roll back to the previous Home Manager generation:
 
 ```sh
-# Build without switching (dry run for evaluation/build)
-home-manager build --flake .#azureuser
-
-# Roll back to previous generation
 home-manager switch --rollback
-```
-
-### Optional: apply directly from Git without cloning
-
-```sh
-nix run home-manager/master -- switch --flake github:dblnz/dev-env#azureuser
-```
-
-## Legacy Setup (Ansible + Docker)
-
-> Note: The Ansible configuration in `configs/` is deprecated in favor of Nix.
-> It's kept for reference during migration.
-
-### Old Method: Configure localhost using Ansible
-
-## Configure localhost using ansible
-
-```bash
-$ cd configs
-$ ansible-playbook playbook.yml --ask-become-pass
-```
-
-Vim commands:
-- :PackerSync
-- :MasonUpdate
-- :TsUpdate
-
-## Build/Run in docker container
-
-The following command will build the container locally and install all needed
-tools on it.
-```
-$ ./build-ctr.sh
-```
-
-Run the following command to start the remote container:
-```
-$ ./run.sh
-```
-
-Set the following environment variables to configure the container:
-- `LOCAL` - set to `1` to use the locally built container instead of the
-  remote one
-
-One can provide the `<src_dir>:<dest_dir>` parameter for a local
-directory to be mapped on the container. Otherwise, the current directory
-will be mapped to `/src` container directory.
-
-## Configurations
-
-### Fonts
-
-Requires nerd-fonts-hack intallation
-
-```powershell
-$ choco install nerd-fonts-hack
 ```
