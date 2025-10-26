@@ -44,10 +44,10 @@
       # Home Manager configurations for different systems
       homeConfigurations = {
         # Linux configuration
-        "azureuser" = mkHome {
+        "dblnz@linux" = mkHome {
           system = "x86_64-linux";
-          username = "azureuser";
-          homeDirectory = "/home/azureuser";
+          username = "dblnz";
+          homeDirectory = "/home/dblnz";
           extraModules = [ ./home-manager/linux.nix ];
         };
 
