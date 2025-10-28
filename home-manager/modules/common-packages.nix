@@ -14,6 +14,7 @@
     go
     lua
     nodejs_24
+    rustup
     typescript
 
     # Development tools
