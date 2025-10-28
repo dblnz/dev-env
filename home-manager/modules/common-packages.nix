@@ -11,6 +11,7 @@
     gawk
 
     # Compilers/Interpretors
+    gcc             # C/C++ compiler
     go
     lua
     nodejs_24
@@ -18,9 +19,12 @@
     typescript
 
     # Development tools
+    cmake           # Build system generator
+    gnumake         # Make build tool
     git
     git-lfs
     gh  # GitHub CLI
+    just
  
     # Editors
 
