@@ -15,22 +15,26 @@
     };
   };
 
-  outputs = { self, nixpkgs, home-manager, ... }@inputs: 
+  outputs = { self, nixpkgs, home-manager, ... }@inputs:
     let
       # Helper function to create home-manager configuration
-      mkHome = { system, username, homeDirectory, extraModules ? [] }: 
-        home-manager.lib.homeManagerConfiguration {
-          pkgs = import nixpkgs {
+      mkHome = { system, username, homeDirectory, extraModules ? [] }:
+        let
+          # Share the same pkgs for both module scope and inline usage
+          pkgsForHome = import nixpkgs {
             inherit system;
             config.allowUnfree = true;
           };
+        in
+        home-manager.lib.homeManagerConfiguration {
+          pkgs = pkgsForHome;
 
           modules = [
             ./home-manager/home.nix
             {
               home = {
                 inherit username homeDirectory;
-                stateVersion = "24.05";
+                stateVersion = "25.05";
               };
               # Pass the nvim-config input to modules if it exists
               _module.args = {
@@ -74,12 +78,12 @@
           path = ./templates/rust;
           description = "Rust development environment";
         };
-        
+
         c = {
           path = ./templates/c;
           description = "C/C++ development environment";
         };
-        
+
         node = {
           path = ./templates/node;
           description = "Node.js development environment";

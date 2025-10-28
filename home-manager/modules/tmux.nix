@@ -10,6 +10,7 @@
     # Terminal settings
     terminal = "xterm-256color";
 
+    newSession = true;
     # Enable mouse support
     mouse = true;
 
@@ -18,6 +19,10 @@
 
     # Start window and pane numbering at 1
     baseIndex = 1;
+
+    escapeTime = 0;
+    secureSocket = false;
+    clock24 = true;
 
     # Renumber windows when one is closed
     #renumberWindows = true;
@@ -37,7 +42,7 @@
       set -g pane-base-index 1
 
       # Set PATH for tmux sessions
-      set-environment -g PATH "$PATH:/usr/local/bin"
+      #set-environment -g PATH "$PATH:/usr/local/bin"
 
       # Better split commands
       bind | split-window -h -c "#{pane_current_path}"
@@ -65,7 +70,7 @@
       bind -r Tab select-pane -t :.+
 
       # Reload configuration
-      bind r source-file ~/.config/tmux/tmux.conf \; display "Config reloaded!"
+      #bind r source-file ~/.config/tmux/tmux.conf \; display "Config reloaded!"
 
       # Copy mode bindings
       bind-key -T copy-mode-vi v send-keys -X begin-selection
@@ -76,29 +81,30 @@
     '';
 
     # Plugins
-    #plugins = with pkgs.tmuxPlugins; [
-    #  sensible
-    #  yank
-    #  {
-    #    plugin = tmux-themepack;
-    #    extraConfig = ''
-    #      set -g @themepack 'powerline/default/cyan'
-    #    '';
-    #  }
-    #  {
-    #    plugin = resurrect;
-    #    extraConfig = ''
-    #      set -g @resurrect-strategy-nvim 'session'
-    #      set -g @resurrect-capture-pane-contents 'on'
-    #    '';
-    #  }
-    #  {
-    #    plugin = continuum;
-    #    extraConfig = ''
-    #      set -g @continuum-restore 'on'
-    #      set -g @continuum-save-interval '15'
-    #    '';
-    #  }
-    #];
+    plugins = with pkgs; [
+      tmuxPlugins.better-mouse-mode
+      tmuxPlugins.sensible
+      tmuxPlugins.yank
+      # {
+      #   plugin = tmuxPlugins.tmux-themepack;
+      #   extraConfig = ''
+      #     set -g @themepack 'powerline/default/cyan'
+      #   '';
+      # }
+      # {
+      #   plugin = tmuxPlugins.resurrect;
+      #   extraConfig = ''
+      #     set -g @resurrect-strategy-nvim 'session'
+      #     set -g @resurrect-capture-pane-contents 'on'
+      #   '';
+      # }
+      # {
+      #   plugin = tmuxPlugins.continuum;
+      #   extraConfig = ''
+      #     set -g @continuum-restore 'on'
+      #     set -g @continuum-save-interval '15'
+      #   '';
+      # }
+    ];
   };
 }

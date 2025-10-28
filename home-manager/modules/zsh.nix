@@ -44,6 +44,13 @@
 
     # Additional shell options
     initContent = ''
+      # FZF integration (if installed)
+      if command -v fzf >/dev/null; then
+        # Keybindings
+        [[ -r "${pkgs.fzf}/share/fzf/key-bindings.zsh" ]] && source "${pkgs.fzf}/share/fzf/key-bindings.zsh"
+        [[ -r "${pkgs.fzf}/share/fzf/completion.zsh" ]] && source "${pkgs.fzf}/share/fzf/completion.zsh"
+      fi
+
       # Bind Ctrl-Space to accept autosuggestion
       bindkey '^ ' autosuggest-accept
 

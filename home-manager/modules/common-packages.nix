@@ -53,6 +53,10 @@
     jq         # JSON processor
     yq-go      # YAML processor
 
+    # Shells
+    bash
+    zsh
+
     # System monitoring
     duf        # Better df
     dust       # Better du
@@ -63,5 +67,9 @@
 
     # Multiplexer plugin managers
     # (tmux plugins will be managed by home-manager)
+    zsh-autosuggestions
+    zsh-syntax-highlighting
+    zsh-history-substring-search
+    zsh-powerlevel10k
   ];
 }
