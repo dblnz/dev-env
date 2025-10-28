@@ -46,8 +46,8 @@
         # Linux configuration
         "dblnz@linux" = mkHome {
           system = "x86_64-linux";
-          username = "azureuser";
-          homeDirectory = "/home/azureuser";
+          username = "dblnz";
+          homeDirectory = "/home/dblnz";
           extraModules = [ ./home-manager/linux.nix ];
         };
 
