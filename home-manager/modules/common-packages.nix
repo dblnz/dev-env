@@ -11,7 +11,9 @@
     gawk
 
     # Compilers/Interpretors
-    gcc             # C/C++ compiler
+    clang_18
+    flatbuffers
+    #gcc             # C/C++ compiler
     go
     lua
     nodejs_24
@@ -65,6 +67,10 @@
     # System monitoring
     duf        # Better df
     dust       # Better du
+
+    # Wasm
+    wasm-tools
+    wkg
 
     # Terminal enhancements
     tmux
