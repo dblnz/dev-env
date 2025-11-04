@@ -12,6 +12,7 @@
 
     # Compilers/Interpretors
     clang_18
+    llvmPackages_18.libclang # libclang runtime for tools like Rust bindgen/clang-sys
     flatbuffers
     #gcc             # C/C++ compiler
     go
