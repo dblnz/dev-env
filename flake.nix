@@ -17,6 +17,23 @@
 
   outputs = { self, nixpkgs, home-manager, ... }@inputs:
     let
+      lib = nixpkgs.lib;
+      systems = [ "x86_64-linux" "aarch64-darwin" "x86_64-darwin" ];
+      # Overlay to pin flatbuffers to the latest upstream release until nixpkgs updates
+      flatbuffersOverlay = final: prev: let
+        version = "25.9.23";
+      in {
+        flatbuffers = prev.flatbuffers.overrideAttrs (old: {
+          inherit version;
+          src = prev.fetchFromGitHub {
+            owner = "google";
+            repo = "flatbuffers";
+            rev = "v${version}";
+            hash = "sha256-A9nWfgcuVW3x9MDFeviCUK/oGcWJQwadI8LqNR8BlQw=";
+          };
+        });
+      };
+
       # Helper function to create home-manager configuration
       mkHome = { system, username, homeDirectory, extraModules ? [] }:
         let
@@ -24,6 +41,7 @@
           pkgsForHome = import nixpkgs {
             inherit system;
             config.allowUnfree = true;
+            overlays = [ flatbuffersOverlay ];
           };
         in
         home-manager.lib.homeManagerConfiguration {
@@ -45,6 +63,9 @@
         };
     in
     {
+      # Expose the overlay so other flakes can consume it if needed
+      overlays.default = flatbuffersOverlay;
+
       # Home Manager configurations for different systems
       homeConfigurations = {
         # Linux configuration
