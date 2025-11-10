@@ -21,7 +21,6 @@
             # Development tools
             python311Packages.pip
             python311Packages.virtualenv
-            python311Packages.poetry
             
             # Linting and formatting
             python311Packages.black
@@ -34,8 +33,6 @@
             
             # Optional: Common packages
             # python311Packages.numpy
-            # python311Packages.pandas
-            # python311Packages.requests
           ];
 
           shellHook = ''
