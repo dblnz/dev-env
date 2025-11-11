@@ -27,7 +27,6 @@
           pkgsForHome = import nixpkgs {
             inherit system;
             config.allowUnfree = true;
-            overlays = [ flatbuffersOverlay ];
           };
         in
         home-manager.lib.homeManagerConfiguration {
@@ -49,9 +48,6 @@
         };
     in
     {
-      # Expose the overlay so other flakes can consume it if needed
-      overlays.default = flatbuffersOverlay;
-
       # Home Manager configurations for different systems
       homeConfigurations = {
         # Linux configuration
