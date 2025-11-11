@@ -11,15 +11,7 @@
     gawk
 
     # Compilers/Interpretors
-    clang_18
-    llvmPackages_18.libclang # libclang runtime for tools like Rust bindgen/clang-sys
-    flatbuffers
-    #gcc             # C/C++ compiler
-    go
-    lua
-    nodejs_24
-    rustup
-    typescript
+    # These should be installed via project flakes to avoid version conflicts
 
     # Development tools
     cmake           # Build system generator
@@ -27,9 +19,9 @@
     git
     git-lfs
     gh  # GitHub CLI
-    just
  
     # Editors
+    # Nvim is set up via the neovim module
 
     # Shell utilities
     bat        # Better cat
@@ -69,13 +61,12 @@
     duf        # Better df
     dust       # Better du
 
-    # Wasm
+    # Wasm for use with wasm modules
     wasm-tools
     wkg
 
     # Terminal enhancements
     tmux
-    zellij     # Modern terminal multiplexer
 
     # Multiplexer plugin managers
     # (tmux plugins will be managed by home-manager)
