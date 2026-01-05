@@ -71,7 +71,11 @@
 
     # Wasm
     wasm-tools
+    wit-bindgen
     wkg
+
+    # Utilities
+    pango harfbuzz freetype fontconfig cairo glib
 
     # Terminal enhancements
     tmux

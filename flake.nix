@@ -20,6 +20,20 @@
       lib = nixpkgs.lib;
       systems = [ "x86_64-linux" "aarch64-darwin" "x86_64-darwin" ];
 
+      flatbuffersOverlay = final: prev: let
+        version = "25.9.23";
+      in {
+          flatbuffers = prev.flatbuffers.overrideAttrs (old: {
+          inherit version;
+          src = prev.fetchFromGitHub {
+              owner = "google";
+              repo = "flatbuffers";
+              rev = "v${version}";
+              hash = "sha256-A9nWfgcuVW3x9MDFeviCUK/oGcWJQwadI8LqNR8BlQw=";
+          };
+          });
+      };
+
       # Helper function to create home-manager configuration
       mkHome = { system, username, homeDirectory, extraModules ? [] }:
         let
@@ -27,6 +41,7 @@
           pkgsForHome = import nixpkgs {
             inherit system;
             config.allowUnfree = true;
+            overlays = [ flatbuffersOverlay ];
           };
         in
         home-manager.lib.homeManagerConfiguration {
@@ -48,6 +63,8 @@
         };
     in
     {
+      overlays.default = flatbuffersOverlay;
+
       # Home Manager configurations for different systems
       homeConfigurations = {
         # Linux configuration
