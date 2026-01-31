@@ -16,7 +16,7 @@
     withNodeJs = true;
     withPython3 = true;
 
-    extraLuaConfig = ''
+    initLua = ''
       -- The lua config will be loaded from ~/.config/nvim
       -- This is just a placeholder for any additional Nix-managed config
     '';

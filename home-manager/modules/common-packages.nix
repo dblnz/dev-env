@@ -70,6 +70,7 @@
     dust       # Better du
 
     # Wasm
+    wasmtime
     wasm-tools
     wit-bindgen
     wkg
