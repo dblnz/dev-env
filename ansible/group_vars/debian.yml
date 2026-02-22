@@ -1,31 +1,38 @@
 ---
 # Linux-specific package mappings (apt/dnf names)
+# Only system-level packages here. CLI tools go via pipx, runtimes via mise.
 
 apt_packages:
+  # Core utilities
   - coreutils
   - findutils
   - gawk
   - sed
   - grep
+  # Shell utilities
   - bat
-  - eza
   - fd-find
   - ripgrep
   - fzf
   - tree
   - htop
   - btop
+  # File management
   - rsync
   - wget
   - curl
+  # Compression
   - gzip
   - bzip2
   - xz-utils
   - zip
   - unzip
+  # JSON/YAML tools
   - jq
+  # System monitoring
   - duf
   - du-dust
+  # Build tools
   - cmake
   - build-essential
   - git
@@ -34,16 +41,18 @@ apt_packages:
   - just
   - stow
   - git-delta
+  # Shells & terminal
   - zsh
   - bash
   - tmux
   - starship
-  - golang
-  - lua5.4
-  - nodejs
-  - npm
+  # Python base (never use pip globally)
+  - python3
+  - python3-venv
+  - pipx
+  # Flatbuffers
   - flatbuffers-compiler
-  # Linux-specific
+  # Linux-specific libs
   - nmap
   - libpango1.0-dev
   - libharfbuzz-dev

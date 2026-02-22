@@ -10,12 +10,12 @@
     - name: Install Neovim (Linux - from PPA or AppImage)
       when: ansible_facts['os_family'] == "Debian"
       block:
-        - name: Add Neovim PPA
+        - name: Add Neovim PPA (Ubuntu only)
           become: true
           ansible.builtin.apt_repository:
             repo: "ppa:neovim-ppa/unstable"
             state: present
-          ignore_errors: true
+          when: ansible_distribution == "Ubuntu"
 
         - name: Install Neovim from apt
           become: true
@@ -49,16 +49,21 @@
 
 - name: Ensure Neovim providers are available
   block:
-    - name: Install pynvim (Python provider)
+    - name: Create Neovim Python virtualenv
+      ansible.builtin.command: python3 -m venv {{ neovim_venv }}
+      args:
+        creates: "{{ neovim_venv }}"
+
+    - name: Install pynvim in dedicated virtualenv
       ansible.builtin.pip:
         name: pynvim
         state: present
-        extra_args: --user
-      ignore_errors: true
+        virtualenv: "{{ neovim_venv }}"
 
     - name: Install neovim npm package (Node provider)
       community.general.npm:
         name: neovim
         global: true
         state: present
-      ignore_errors: true
+      environment:
+        PATH: "{{ ansible_facts['env']['HOME'] }}/.local/bin:/usr/local/bin:/usr/bin:/bin"

@@ -43,10 +43,6 @@ brew_packages:
   - tmux
   - zellij
   - starship
-  - go
-  - lua
-  - node
-  - typescript
   - flatbuffers
   # macOS-specific
   - nmap

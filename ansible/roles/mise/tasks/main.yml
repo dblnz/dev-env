@@ -5,7 +5,7 @@
       ansible.builtin.command: which mise
       register: mise_check
       changed_when: false
-      ignore_errors: true
+      failed_when: false
 
     - name: Install mise via official installer
       ansible.builtin.shell: |
