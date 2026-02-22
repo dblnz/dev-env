@@ -75,9 +75,10 @@ jobs:
       - name: Create release tarball
         run: |
           VERSION="${GITHUB_REF#refs/tags/}"
-          tar czf "devup-${VERSION}.tar.gz" \
+          tar czf "/tmp/devup-${VERSION}.tar.gz" \
             --exclude='.git' \
             .
+          mv "/tmp/devup-${VERSION}.tar.gz" .
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
