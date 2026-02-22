@@ -56,7 +56,7 @@ jobs:
         continue-on-error: true
 
       - name: Verify bootstrap script is valid
-        run: bash -n bootstrap.sh
+        run: bash -n devup.sh
 
       - name: Verify prepare-stow script is valid
         run: bash -n scripts/prepare-stow.sh

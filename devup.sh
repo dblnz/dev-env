@@ -2,8 +2,8 @@
 # =============================================================================
 # Devup Bootstrap
 # Usage:
-#   Fresh machine:  curl -sL https://github.com/dblnz/dev/releases/latest/download/bootstrap.sh | bash
-#   From clone:     ./bootstrap.sh
+#   Fresh machine:  curl -sL https://github.com/dblnz/devup/releases/latest/download/devup.sh | bash
+#   From clone:     ./devup.sh
 # =============================================================================
 set -euo pipefail
 
