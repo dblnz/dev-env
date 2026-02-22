@@ -1,0 +1,51 @@
+---
+- name: Install Rust via rustup
+  block:
+    - name: Check if rustup is installed
+      ansible.builtin.command: which rustup
+      register: rustup_check
+      changed_when: false
+      ignore_errors: true
+
+    - name: Install rustup
+      ansible.builtin.shell: |
+        curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --no-modify-path
+      when: rustup_check.rc != 0
+
+    - name: Update Rust stable toolchain
+      ansible.builtin.shell: |
+        source "{{ ansible_facts['env']['HOME'] }}/.cargo/env" && rustup update stable
+      args:
+        executable: /bin/bash
+      changed_when: false
+      tags: [update]
+
+    - name: Install common Rust components
+      ansible.builtin.shell: |
+        source "{{ ansible_facts['env']['HOME'] }}/.cargo/env" && rustup component add clippy rustfmt rust-analyzer
+      args:
+        executable: /bin/bash
+      changed_when: false
+
+    - name: Install common cargo tools
+      ansible.builtin.shell: |
+        source "{{ ansible_facts['env']['HOME'] }}/.cargo/env"
+        for tool in cargo-watch cargo-edit cargo-expand; do
+          if ! cargo install --list | grep -q "^$tool "; then
+            cargo install "$tool"
+          fi
+        done
+      args:
+        executable: /bin/bash
+      changed_when: false
+
+    - name: Install wasm targets
+      ansible.builtin.shell: |
+        source "{{ ansible_facts['env']['HOME'] }}/.cargo/env"
+        rustup target add wasm32-unknown-unknown
+        rustup target add wasm32-wasip1
+        rustup target add wasm32-wasip2
+      args:
+        executable: /bin/bash
+      changed_when: false
+      ignore_errors: true

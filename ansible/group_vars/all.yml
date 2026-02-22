@@ -1,0 +1,85 @@
+---
+# GitHub repository for release-based updates
+devup_repo: "dblnz/dev"
+devup_install_dir: "{{ ansible_facts['env']['HOME'] }}/.local/share/devup"
+
+# Neovim config repository
+nvim_config_repo: "https://github.com/dblnz/nvim-dotfiles.git"
+nvim_config_dir: "{{ ansible_facts['env']['HOME'] }}/.config/nvim"
+
+# Dotfiles source directory (relative to playbook)
+dotfiles_dir: "{{ playbook_dir }}/../dotfiles"
+dotfiles_target: "{{ ansible_facts['env']['HOME'] }}"
+
+# Stow packages to install (directory names under dotfiles/)
+stow_packages:
+  - zsh
+  - bash
+  - tmux
+  - git
+  - starship
+  - mise
+
+# Common packages (installed on both macOS and Linux)
+common_packages:
+  # Core utilities
+  - coreutils
+  - findutils
+  - gawk
+  - gnu-sed
+  - grep
+  # Shell utilities
+  - bat
+  - eza
+  - fd
+  - ripgrep
+  - fzf
+  - tree
+  - htop
+  - btop
+  - bottom
+  # File management
+  - rsync
+  - wget
+  - curl
+  # Compression
+  - gzip
+  - bzip2
+  - xz
+  - zip
+  - unzip
+  # JSON/YAML tools
+  - jq
+  - yq
+  # System monitoring
+  - duf
+  - dust
+  # Development tools
+  - cmake
+  - make
+  - git
+  - git-lfs
+  - gh
+  - just
+  - stow
+  - delta
+  # Shells
+  - zsh
+  - bash
+  # Terminal
+  - tmux
+  - zellij
+  # Prompt
+  - starship
+  # Compilers / build tools
+  - go
+  - lua
+  - node
+  - typescript
+  - flatbuffers
+
+# Mise global tool versions
+mise_global_tools:
+  node: "lts"
+  python: "latest"
+  go: "latest"

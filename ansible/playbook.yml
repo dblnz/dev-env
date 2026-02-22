@@ -1,0 +1,23 @@
+---
+- name: Dev environment setup
+  hosts: localhost
+  gather_facts: true
+
+  pre_tasks:
+    - name: Set OS family group
+      ansible.builtin.group_by:
+        key: "{{ ansible_facts['os_family'] | lower }}"
+
+  roles:
+    - role: base
+      tags: [base, packages]
+    - role: shell
+      tags: [shell]
+    - role: neovim
+      tags: [neovim, nvim]
+    - role: mise
+      tags: [mise]
+    - role: rust
+      tags: [rust]
+    - role: dotfiles
+      tags: [dotfiles]

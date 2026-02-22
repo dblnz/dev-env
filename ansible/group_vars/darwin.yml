@@ -1,0 +1,60 @@
+---
+# macOS-specific package mappings
+# When brew and apt have different names, override here
+
+brew_packages:
+  # Common packages (using brew formula names)
+  - coreutils
+  - findutils
+  - gawk
+  - gnu-sed
+  - grep
+  - bat
+  - eza
+  - fd
+  - ripgrep
+  - fzf
+  - tree
+  - htop
+  - btop
+  - bottom
+  - rsync
+  - wget
+  - curl
+  - gzip
+  - bzip2
+  - xz
+  - zip
+  - unzip
+  - jq
+  - yq
+  - duf
+  - dust
+  - cmake
+  - make
+  - git
+  - git-lfs
+  - gh
+  - just
+  - stow
+  - git-delta
+  - zsh
+  - bash
+  - tmux
+  - zellij
+  - starship
+  - go
+  - lua
+  - node
+  - typescript
+  - flatbuffers
+  # macOS-specific
+  - nmap
+  - pango
+  - harfbuzz
+  - freetype
+  - fontconfig
+  - cairo
+  - glib
+
+brew_casks: []

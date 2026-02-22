@@ -1,0 +1,64 @@
+---
+- name: Install Neovim
+  block:
+    - name: Install Neovim (macOS)
+      community.general.homebrew:
+        name: neovim
+        state: present
+      when: ansible_facts['os_family'] == "Darwin"
+
+    - name: Install Neovim (Linux - from PPA or AppImage)
+      when: ansible_facts['os_family'] == "Debian"
+      block:
+        - name: Add Neovim PPA
+          become: true
+          ansible.builtin.apt_repository:
+            repo: "ppa:neovim-ppa/unstable"
+            state: present
+          ignore_errors: true
+
+        - name: Install Neovim from apt
+          become: true
+          ansible.builtin.apt:
+            name: neovim
+            state: present
+            update_cache: true
+
+- name: Clone Neovim configuration
+  block:
+    - name: Check if nvim config exists
+      ansible.builtin.stat:
+        path: "{{ nvim_config_dir }}"
+      register: nvim_config_check
+
+    - name: Clone nvim-dotfiles
+      ansible.builtin.git:
+        repo: "{{ nvim_config_repo }}"
+        dest: "{{ nvim_config_dir }}"
+        update: false
+      when: not nvim_config_check.stat.exists
+
+    - name: Update nvim-dotfiles
+      ansible.builtin.git:
+        repo: "{{ nvim_config_repo }}"
+        dest: "{{ nvim_config_dir }}"
+        update: true
+        force: false
+      when: nvim_config_check.stat.exists
+      tags: [update]
+
+- name: Ensure Neovim providers are available
+  block:
+    - name: Install pynvim (Python provider)
+      ansible.builtin.pip:
+        name: pynvim
+        state: present
+        extra_args: --user
+      ignore_errors: true
+
+    - name: Install neovim npm package (Node provider)
+      community.general.npm:
+        name: neovim
+        global: true
+        state: present
+      ignore_errors: true

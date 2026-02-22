@@ -1,0 +1,66 @@
+---
+# Linux-specific package mappings (apt/dnf names)
+
+apt_packages:
+  - coreutils
+  - findutils
+  - gawk
+  - sed
+  - grep
+  - bat
+  - eza
+  - fd-find
+  - ripgrep
+  - fzf
+  - tree
+  - htop
+  - btop
+  - rsync
+  - wget
+  - curl
+  - gzip
+  - bzip2
+  - xz-utils
+  - zip
+  - unzip
+  - jq
+  - duf
+  - du-dust
+  - cmake
+  - build-essential
+  - git
+  - git-lfs
+  - gh
+  - just
+  - stow
+  - git-delta
+  - zsh
+  - bash
+  - tmux
+  - starship
+  - golang
+  - lua5.4
+  - nodejs
+  - npm
+  - flatbuffers-compiler
+  # Linux-specific
+  - nmap
+  - libpango1.0-dev
+  - libharfbuzz-dev
+  - libfreetype-dev
+  - libfontconfig1-dev
+  - libcairo2-dev
+  - libglib2.0-dev
+
+# Packages to install from GitHub releases or other sources
+# (ones not available in apt by default)
+linux_extra_install:
+  - name: eza
+    method: cargo
+  - name: zellij
+    method: cargo
+  - name: yq
+    method: binary
+    url: "https://github.com/mikefarah/yq/releases/latest/download/yq_linux_{{ 'amd64' if ansible_architecture == 'x86_64' else 'arm64' }}"
+  - name: bottom
+    method: cargo
