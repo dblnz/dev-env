@@ -48,3 +48,17 @@
       args:
         executable: /bin/bash
       changed_when: false
+
+- name: Install cargo packages
+  ansible.builtin.shell: |
+    source "{{ ansible_facts['env']['HOME'] }}/.cargo/env"
+    if ! cargo install --list | grep -q "^{{ item }} "; then
+      cargo install {{ item }}
+    fi
+  args:
+    executable: /bin/bash
+  loop:
+    - eza
+    - zellij
+    - bottom
+  changed_when: false

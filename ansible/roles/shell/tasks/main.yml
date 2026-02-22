@@ -77,7 +77,15 @@
         dest: "{{ ansible_facts['env']['HOME'] }}/.tmux/plugins/tpm"
       when: not tpm_check.stat.exists
 
+- name: Check if tmux.conf exists
+  ansible.builtin.stat:
+    path: "{{ ansible_facts['env']['HOME'] }}/.tmux.conf"
+  register: tmux_conf_check
+
 - name: Install tmux plugins
   ansible.builtin.shell: |
     {{ ansible_facts['env']['HOME'] }}/.tmux/plugins/tpm/bin/install_plugins
+  environment:
+    TMUX_PLUGIN_MANAGER_PATH: "{{ ansible_facts['env']['HOME'] }}/.tmux/plugins"
   changed_when: false
+  when: tmux_conf_check.stat.exists

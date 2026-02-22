@@ -15,7 +15,7 @@
           ansible.builtin.apt_repository:
             repo: "ppa:neovim-ppa/unstable"
             state: present
-          when: ansible_distribution == "Ubuntu"
+          when: ansible_facts['distribution'] == "Ubuntu"
 
         - name: Install Neovim from apt
           become: true
@@ -60,10 +60,19 @@
         state: present
         virtualenv: "{{ neovim_venv }}"
 
+    - name: Check if npm is available
+      ansible.builtin.command: which npm
+      register: npm_check
+      changed_when: false
+      failed_when: false
+      environment:
+        PATH: "{{ ansible_facts['env']['HOME'] }}/.local/share/mise/shims:{{ ansible_facts['env']['HOME'] }}/.local/bin:/usr/local/bin:/usr/bin:/bin"
+
     - name: Install neovim npm package (Node provider)
       community.general.npm:
         name: neovim
         global: true
         state: present
       environment:
-        PATH: "{{ ansible_facts['env']['HOME'] }}/.local/bin:/usr/local/bin:/usr/bin:/bin"
+        PATH: "{{ ansible_facts['env']['HOME'] }}/.local/share/mise/shims:{{ ansible_facts['env']['HOME'] }}/.local/bin:/usr/local/bin:/usr/bin:/bin"
+      when: npm_check.rc == 0

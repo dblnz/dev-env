@@ -20,13 +20,26 @@
     state: directory
     mode: "0755"
 
+- name: Ensure mise config directory exists
+  ansible.builtin.file:
+    path: "{{ ansible_facts['env']['HOME'] }}/.config/mise"
+    state: directory
+    mode: "0755"
+
+- name: Copy mise config if not already present
+  ansible.builtin.copy:
+    src: "{{ playbook_dir }}/../dotfiles/mise/.config/mise/config.toml"
+    dest: "{{ ansible_facts['env']['HOME'] }}/.config/mise/config.toml"
+    force: false
+    mode: "0644"
+
 - name: Install global mise tools
   ansible.builtin.shell: |
     export PATH="{{ ansible_facts['env']['HOME'] }}/.local/bin:$PATH"
     mise trust --all
     mise install
+    mise reshim
   args:
     chdir: "{{ ansible_facts['env']['HOME'] }}"
+    executable: /bin/bash
   changed_when: false
-  environment:
-    MISE_CONFIG_FILE: "{{ ansible_facts['env']['HOME'] }}/.config/mise/config.toml"

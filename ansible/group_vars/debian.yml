@@ -29,9 +29,6 @@ apt_packages:
   - unzip
   # JSON/YAML tools
   - jq
-  # System monitoring
-  - duf
-  - du-dust
   # Build tools
   - cmake
   - build-essential
@@ -45,7 +42,6 @@ apt_packages:
   - zsh
   - bash
   - tmux
-  - starship
   # Python base (never use pip globally)
   - python3
   - python3-venv
@@ -64,12 +60,9 @@ apt_packages:
 # Packages to install from GitHub releases or other sources
 # (ones not available in apt by default)
 linux_extra_install:
-  - name: eza
-    method: cargo
-  - name: zellij
-    method: cargo
   - name: yq
     method: binary
-    url: "https://github.com/mikefarah/yq/releases/latest/download/yq_linux_{{ 'amd64' if ansible_architecture == 'x86_64' else 'arm64' }}"
-  - name: bottom
-    method: cargo
+    url: "https://github.com/mikefarah/yq/releases/latest/download/yq_linux_{{ 'amd64' if ansible_facts['architecture'] == 'x86_64' else 'arm64' }}"
+  - name: starship
+    method: script
+    cmd: curl -sS https://starship.rs/install.sh | sh -s -- -y -b {{ ansible_facts['env']['HOME'] }}/.local/bin
