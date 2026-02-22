@@ -6,14 +6,14 @@ Portable terminal development environment for macOS and Linux. Single-command se
 
 **Fresh machine (no clone needed):**
 ```sh
-curl -sL https://raw.githubusercontent.com/dblnz/dev/main/bootstrap.sh | bash
+curl -sL https://raw.githubusercontent.com/dblnz/dev/main/devup.sh | bash
 ```
 
 **From a local clone:**
 ```sh
-git clone https://github.com/dblnz/dev.git ~/workspace/dev
+git clone https://github.com/dblnz/devup.git ~/workspace/dev
 cd ~/workspace/dev
-./bootstrap.sh
+./devup.sh
 ```
 
 The bootstrap script installs Homebrew/apt prerequisites, Ansible, downloads the latest release to `~/.local/share/devup/`, and runs the full playbook.
@@ -71,7 +71,7 @@ mise install
 ## Structure
 
 ```
-├── bootstrap.sh              # Entry point for fresh machines
+├── devup.sh                   # Entry point for fresh machines
 ├── Makefile                   # make setup, make update, etc.
 ├── ansible/
 │   ├── playbook.yml           # Main playbook
