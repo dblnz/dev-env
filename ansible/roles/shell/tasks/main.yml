@@ -39,7 +39,6 @@
         repo: "https://github.com/Aloxaf/fzf-tab.git"
         dest: "{{ ansible_facts['env']['HOME'] }}/.oh-my-zsh/custom/plugins/fzf-tab"
         update: true
-      ignore_errors: true
 
     - name: Install zsh-autosuggestions
       ansible.builtin.git:
@@ -82,4 +81,3 @@
   ansible.builtin.shell: |
     {{ ansible_facts['env']['HOME'] }}/.tmux/plugins/tpm/bin/install_plugins
   changed_when: false
-  ignore_errors: true

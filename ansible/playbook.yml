@@ -2,6 +2,7 @@
 - name: Dev environment setup
   hosts: localhost
   gather_facts: true
+  any_errors_fatal: true
 
   pre_tasks:
     - name: Set OS family group

@@ -60,10 +60,14 @@ install_prerequisites() {
 
   elif [[ "$OS" == "linux" ]]; then
     # Ensure basic tools exist
-    if ! command -v curl &>/dev/null || ! command -v git &>/dev/null; then
-      warn "Installing basic tools..."
+    local missing=()
+    for cmd in curl git jq rsync; do
+      command -v "$cmd" &>/dev/null || missing+=("$cmd")
+    done
+    if [[ ${#missing[@]} -gt 0 ]]; then
+      warn "Installing missing tools: ${missing[*]}..."
       sudo apt-get update -qq
-      sudo apt-get install -yqq curl git jq rsync
+      sudo apt-get install -yqq "${missing[@]}"
     fi
     info "System prerequisites ready"
   fi
@@ -82,15 +86,12 @@ install_ansible() {
   if [[ "$OS" == "darwin" ]]; then
     brew install ansible
   elif [[ "$OS" == "linux" ]]; then
-    # Use pipx or pip for latest Ansible
-    if command -v pipx &>/dev/null; then
-      pipx install --include-deps ansible
-    elif command -v pip3 &>/dev/null; then
-      pip3 install --user ansible
-    else
-      sudo apt-get install -yqq python3-pip
-      pip3 install --user ansible
+    # Use pipx to avoid PEP 668 externally-managed-environment errors
+    if ! command -v pipx &>/dev/null; then
+      sudo apt-get install -yqq pipx
     fi
+    pipx install --include-deps ansible
+    pipx ensurepath
     export PATH="$HOME/.local/bin:$PATH"
   fi
   info "Ansible installed"

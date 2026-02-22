@@ -6,7 +6,7 @@ Portable terminal development environment for macOS and Linux. Single-command se
 
 **Fresh machine (no clone needed):**
 ```sh
-curl -sL https://raw.githubusercontent.com/dblnz/dev/main/devup.sh | bash
+curl -sL https://raw.githubusercontent.com/dblnz/devup/main/devup.sh | bash
 ```
 
 **From a local clone:**

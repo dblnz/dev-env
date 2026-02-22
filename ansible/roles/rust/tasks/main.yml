@@ -5,7 +5,7 @@
       ansible.builtin.command: which rustup
       register: rustup_check
       changed_when: false
-      ignore_errors: true
+      failed_when: false
 
     - name: Install rustup
       ansible.builtin.shell: |
@@ -48,4 +48,3 @@
       args:
         executable: /bin/bash
       changed_when: false
-      ignore_errors: true

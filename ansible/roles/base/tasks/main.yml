@@ -43,8 +43,18 @@
       ansible.builtin.apt:
         name: "{{ apt_packages }}"
         state: present
-      ignore_errors: true
 
     - name: Install extra Linux packages from alternative sources
       ansible.builtin.include_tasks: linux_extras.yml
       when: linux_extra_install is defined
+
+    - name: Ensure pipx path is set up
+      ansible.builtin.command: pipx ensurepath
+      changed_when: false
+
+- name: Install CLI tools via pipx
+  community.general.pipx:
+    name: "{{ item }}"
+    state: present
+  loop: "{{ pipx_packages }}"
+  when: pipx_packages | length > 0

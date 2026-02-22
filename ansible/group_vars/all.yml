@@ -71,15 +71,18 @@ common_packages:
   - zellij
   # Prompt
   - starship
-  # Compilers / build tools
-  - go
-  - lua
-  - node
-  - typescript
+  # Flatbuffers
   - flatbuffers
+
+# Python CLI tools installed via pipx (isolated, no system pollution)
+pipx_packages: []
+
+# Neovim Python provider virtualenv
+neovim_venv: "{{ ansible_facts['env']['HOME'] }}/.venvs/neovim"
 
 # Mise global tool versions
 mise_global_tools:
   node: "lts"
   python: "latest"
   go: "latest"
+  lua: "latest"
