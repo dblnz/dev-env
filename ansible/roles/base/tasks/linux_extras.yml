@@ -1,23 +1,21 @@
 ---
 - name: Install extra packages (binary downloads)
-  when: item.method == "binary"
-  block:
-    - name: "Download {{ item.name }}"
-      ansible.builtin.get_url:
-        url: "{{ item.url }}"
-        dest: "{{ ansible_env.HOME }}/.local/bin/{{ item.name }}"
-        mode: "0755"
-      loop: "{{ linux_extra_install | selectattr('method', 'equalto', 'binary') }}"
-      loop_control:
-        label: "{{ item.name }}"
+  ansible.builtin.get_url:
+    url: "{{ item.url }}"
+    dest: "{{ ansible_facts['env']['HOME'] }}/.local/bin/{{ item.name }}"
+    mode: "0755"
+  loop: "{{ linux_extra_install | selectattr('method', 'equalto', 'binary') | list }}"
+  loop_control:
+    label: "{{ item.name }}"
 
-- name: Install extra packages (cargo)
-  when: item.method == "cargo"
+- name: Install extra packages (script)
   ansible.builtin.shell: |
     if ! command -v {{ item.name }} &>/dev/null; then
-      cargo install {{ item.name }}
+      {{ item.cmd }}
     fi
-  loop: "{{ linux_extra_install | selectattr('method', 'equalto', 'cargo') }}"
+  args:
+    executable: /bin/bash
+  loop: "{{ linux_extra_install | selectattr('method', 'equalto', 'script') | list }}"
   loop_control:
     label: "{{ item.name }}"
   changed_when: false

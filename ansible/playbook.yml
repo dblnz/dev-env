@@ -12,13 +12,13 @@
   roles:
     - role: base
       tags: [base, packages]
-    - role: shell
-      tags: [shell]
-    - role: neovim
-      tags: [neovim, nvim]
     - role: mise
       tags: [mise]
     - role: rust
       tags: [rust]
+    - role: shell
+      tags: [shell]
+    - role: neovim
+      tags: [neovim, nvim]
     - role: dotfiles
       tags: [dotfiles]
