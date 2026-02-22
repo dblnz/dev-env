@@ -1,73 +1,100 @@
-# Development Setup (Nix + Home Manager)
+# Dev Environment (Ansible + Stow)
 
-Minimal instructions to get started, use templates, manage Home Manager, and roll back if needed.
+Portable terminal development environment for macOS and Linux. Single-command setup, release-based updates.
 
-## Quick start
+## Quick Start
 
-If you have `nix` installed:
+**Fresh machine (no clone needed):**
 ```sh
-nix run home-manager/master -- switch --flake github:dblnz/dev-env#dblnz@linux -b backup
+curl -sL https://raw.githubusercontent.com/dblnz/dev/main/bootstrap.sh | bash
 ```
 
-If not you can use:
+**From a local clone:**
 ```sh
-git clone <repo-url> ~/dev-env
-cd ~/dev-env
+git clone https://github.com/dblnz/dev.git ~/workspace/dev
+cd ~/workspace/dev
 ./bootstrap.sh
 ```
 
-The bootstrap script installs Nix if needed, enables flakes, and activates the appropriate Home Manager profile for your OS.
+The bootstrap script installs Homebrew/apt prerequisites, Ansible, downloads the latest release to `~/.local/share/devup/`, and runs the full playbook.
 
-## Use project templates
+## What Gets Installed
 
-From a new or empty project directory:
+| Layer | Tool | Managed By |
+|---|---|---|
+| System packages | ripgrep, fd, bat, fzf, jq, etc. | Ansible (brew/apt) |
+| Compilers | clang, cmake, make, go, node | Ansible (brew/apt) |
+| Rust | rustup + stable toolchain | Ansible + rustup |
+| Neovim | nvim + LazyVim config | Ansible + Mason.nvim |
+| Dotfiles | zsh, bash, tmux, git, starship | GNU Stow |
+| Version switching | Per-project node/python/go | mise |
 
-```sh
-# If cloned locally
-nix flake init -t ~/dev-env#rust
-
-# Or directly from GitHub
-nix flake init -t github:dblnz/dev-env#rust
-
-# Enter the dev environment
-nix develop
-```
-
-Available templates: rust, c, node, python, go
-
-## AI CLI dev shells
-
-To enter the bundled AI CLIs, run from the repo root:
-- `nix develop .#claude` for the Claude Code CLI
-- `nix develop .#copilot` for the GitHub Copilot CLI
-- `nix develop .#codex` for the Codex CLI
-
-Each shell keeps the CLI isolated to that environment; exit the shell to leave no residue.
-
-## Manage with Home Manager
-
-Apply changes again later using the same profile that bootstrap selected:
+## Day-to-Day Usage
 
 ```sh
-cd ~/dev-env
-# Linux
-home-manager switch --flake .#dblnz@linux
-# macOS (Apple Silicon)
-home-manager switch --flake .#dblnz@darwin
-# macOS (Intel)
-home-manager switch --flake .#dblnz@darwin-intel
+# Apply configuration after editing dotfiles or vars
+make setup
+
+# Apply only dotfiles
+make dotfiles
+
+# Apply specific roles
+make tags TAGS=shell,neovim
+
+# Update to latest release from GitHub
+devup-update
+
+# Show all make targets
+make help
 ```
 
-Build without switching (evaluation/build only):
+## Updates
+
+On every new terminal session, the shell checks GitHub for new releases. If an update is available, you'll see:
+
+```
+⚡ devup update available (v1.2.0). Run `devup-update` to apply.
+```
+
+Run `devup-update` to download the latest release and re-apply the playbook. Your working clone is never touched — the installed copy lives at `~/.local/share/devup/`.
+
+## Project Templates
+
+Use `mise` for per-project language versions:
 
 ```sh
-home-manager build --flake .#dblnz@linux   # or the matching profile for your OS
+# In a project directory
+echo '[tools]\nnode = "20"' > .mise.toml
+mise install
 ```
 
-## Roll back
+## Structure
 
-If something goes wrong, roll back to the previous Home Manager generation:
-
-```sh
-home-manager switch --rollback
 ```
+├── bootstrap.sh              # Entry point for fresh machines
+├── Makefile                   # make setup, make update, etc.
+├── ansible/
+│   ├── playbook.yml           # Main playbook
+│   ├── inventory/             # Local connection config
+│   ├── group_vars/            # Package lists (all, darwin, linux)
+│   └── roles/                 # base, shell, neovim, mise, rust, dotfiles
+└── dotfiles/                  # Stow-managed dotfiles
+    ├── zsh/.zshrc
+    ├── bash/.bashrc
+    ├── tmux/.tmux.conf
+    ├── git/.gitconfig
+    ├── starship/.config/starship.toml
+    └── mise/.config/mise/config.toml
+```
+
+## Adding a Package
+
+1. Edit `ansible/group_vars/darwin.yml` and/or `ansible/group_vars/linux.yml`
+2. Add the package name to the appropriate list
+3. Run `make setup`
+
+## Adding a Dotfile
+
+1. Create `dotfiles/<app>/` mirroring `$HOME` structure
+2. Add the directory name to `stow_packages` in `ansible/group_vars/all.yml`
+3. Run `make dotfiles`

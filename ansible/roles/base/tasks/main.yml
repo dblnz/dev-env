@@ -1,0 +1,50 @@
+---
+- name: Install packages (macOS via Homebrew)
+  when: ansible_facts['os_family'] == "Darwin"
+  block:
+    - name: Ensure Homebrew is installed
+      ansible.builtin.stat:
+        path: /opt/homebrew/bin/brew
+      register: homebrew_check
+
+    - name: Install Homebrew
+      ansible.builtin.shell: |
+        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+      when: not homebrew_check.stat.exists
+
+    - name: Update Homebrew
+      community.general.homebrew:
+        update_homebrew: true
+      tags: [update]
+
+    - name: Install brew packages
+      community.general.homebrew:
+        name: "{{ brew_packages }}"
+        state: present
+
+    - name: Install brew casks
+      community.general.homebrew_cask:
+        name: "{{ item }}"
+        state: present
+      loop: "{{ brew_casks }}"
+      when: brew_casks | length > 0
+
+- name: Install packages (Linux via apt)
+  when: ansible_facts['os_family'] == "Debian"
+  block:
+    - name: Update apt cache
+      become: true
+      ansible.builtin.apt:
+        update_cache: true
+        cache_valid_time: 3600
+
+    - name: Install apt packages
+      become: true
+      ansible.builtin.apt:
+        name: "{{ apt_packages }}"
+        state: present
+      ignore_errors: true
+
+    - name: Install extra Linux packages from alternative sources
+      ansible.builtin.include_tasks: linux_extras.yml
+      when: linux_extra_install is defined

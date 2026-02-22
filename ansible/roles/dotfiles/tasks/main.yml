@@ -1,0 +1,32 @@
+---
+- name: Deploy dotfiles with GNU Stow
+  block:
+    - name: Ensure stow is available
+      ansible.builtin.command: which stow
+      register: stow_check
+      changed_when: false
+
+    - name: Create required XDG directories
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        mode: "0755"
+      loop:
+        - "{{ ansible_facts['env']['HOME'] }}/.config"
+        - "{{ ansible_facts['env']['HOME'] }}/.config/starship"
+        - "{{ ansible_facts['env']['HOME'] }}/.config/mise"
+        - "{{ ansible_facts['env']['HOME'] }}/.local/bin"
+        - "{{ ansible_facts['env']['HOME'] }}/.local/share"
+
+    - name: Remove conflicting symlinks and back up real files per package
+      ansible.builtin.script:
+        cmd: "{{ playbook_dir }}/../scripts/prepare-stow.sh {{ dotfiles_dir }} {{ dotfiles_target }} {{ stow_packages | join(' ') }}"
+      register: prepare_result
+      changed_when: "'Backed up' in prepare_result.stdout or 'Removed' in prepare_result.stdout"
+
+    - name: Stow each dotfile package
+      ansible.builtin.shell: |
+        cd "{{ dotfiles_dir }}" && stow -v --restow --target="{{ dotfiles_target }}" "{{ item }}"
+      loop: "{{ stow_packages }}"
+      register: stow_result
+      changed_when: "'LINK' in stow_result.stderr"

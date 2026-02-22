@@ -1,0 +1,32 @@
+---
+- name: Install mise
+  block:
+    - name: Check if mise is installed
+      ansible.builtin.command: which mise
+      register: mise_check
+      changed_when: false
+      ignore_errors: true
+
+    - name: Install mise via official installer
+      ansible.builtin.shell: |
+        curl https://mise.run | sh
+      when: mise_check.rc != 0
+      environment:
+        MISE_INSTALL_PATH: "{{ ansible_facts['env']['HOME'] }}/.local/bin/mise"
+
+- name: Ensure ~/.local/bin is in PATH
+  ansible.builtin.file:
+    path: "{{ ansible_facts['env']['HOME'] }}/.local/bin"
+    state: directory
+    mode: "0755"
+
+- name: Install global mise tools
+  ansible.builtin.shell: |
+    export PATH="{{ ansible_facts['env']['HOME'] }}/.local/bin:$PATH"
+    mise trust --all
+    mise install
+  args:
+    chdir: "{{ ansible_facts['env']['HOME'] }}"
+  changed_when: false
+  environment:
+    MISE_CONFIG_FILE: "{{ ansible_facts['env']['HOME'] }}/.config/mise/config.toml"

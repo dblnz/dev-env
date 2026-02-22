@@ -1,112 +1,203 @@
 #!/usr/bin/env bash
-# Bootstrap script for setting up Nix and Home Manager
+# =============================================================================
+# Devup Bootstrap
+# Usage:
+#   Fresh machine:  curl -sL https://github.com/dblnz/dev/releases/latest/download/bootstrap.sh | bash
+#   From clone:     ./bootstrap.sh
+# =============================================================================
+set -euo pipefail
 
-set -e
-
-# Colors for output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
-NC='\033[0m' # No Color
+NC='\033[0m'
 
-# Globals set during execution
-OS=""
-PROFILE=""
-SCRIPT_DIR=""
+REPO="dblnz/dev"
+INSTALL_DIR="${DEVUP_DIR:-$HOME/.local/share/devup}"
 
-echo "Bootstrapping Nix development environment..."
+info()  { echo -e "${GREEN}[✓]${NC} $*"; }
+warn()  { echo -e "${YELLOW}[!]${NC} $*"; }
+error() { echo -e "${RED}[✗]${NC} $*"; exit 1; }
 
-# -----------------------------
-# Functions
-# -----------------------------
+# ---------------------------------------------------------------------------
+# 1. Detect OS
+# ---------------------------------------------------------------------------
+detect_os() {
+  case "$(uname -s)" in
+    Darwin) OS="darwin" ;;
+    Linux)  OS="linux" ;;
+    *)      error "Unsupported OS: $(uname -s)" ;;
+  esac
+  info "Detected OS: $OS"
+}
 
-# Detect operating system and choose the appropriate Home Manager profile
-detect_os_and_profile() {
-    if [[ "$OSTYPE" == "linux-gnu"* ]]; then
-        OS="linux"
-        PROFILE="dblnz@linux"
-    elif [[ "$OSTYPE" == "darwin"* ]]; then
-        OS="darwin"
-        if [[ $(uname -m) == "arm64" ]]; then
-            PROFILE="dblnz@darwin"
-        else
-            PROFILE="dblnz@darwin-intel"
-        fi
-    else
-        echo -e "${RED}Unsupported operating system: $OSTYPE${NC}"
-        exit 1
+# ---------------------------------------------------------------------------
+# 2. Install system prerequisites
+# ---------------------------------------------------------------------------
+install_prerequisites() {
+  if [[ "$OS" == "darwin" ]]; then
+    # Install Xcode CLI tools if needed
+    if ! xcode-select -p &>/dev/null; then
+      warn "Installing Xcode Command Line Tools..."
+      xcode-select --install
+      # Wait for installation
+      until xcode-select -p &>/dev/null; do sleep 5; done
     fi
 
-    echo -e "${GREEN}Detected OS: $OS${NC}"
-    echo -e "${GREEN}Using profile: $PROFILE${NC}"
-}
+    # Install Homebrew if needed
+    if ! command -v brew &>/dev/null; then
+      warn "Installing Homebrew..."
+      /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
-# Ensure Nix is installed; if not, install it and source the environment
-install_nix_if_missing() {
-    if ! command -v nix &> /dev/null; then
-        echo -e "${YELLOW}Nix is not installed. Installing Nix...${NC}"
-
-        if [[ "$OS" == "darwin" ]]; then
-            # macOS installation
-            sh <(curl -L https://nixos.org/nix/install)
-        else
-            # Linux installation (multi-user)
-            sh <(curl -L https://nixos.org/nix/install) --daemon
-        fi
-
-        # Source Nix (daemon profile if present)
-        if [ -e '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh' ]; then
-            . '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'
-        fi
-    else
-        echo -e "${GREEN}Nix is already installed${NC}"
+      # Add brew to PATH for this session
+      if [[ -f /opt/homebrew/bin/brew ]]; then
+        eval "$(/opt/homebrew/bin/brew shellenv)"
+      elif [[ -f /usr/local/bin/brew ]]; then
+        eval "$(/usr/local/bin/brew shellenv)"
+      fi
     fi
-}
+    info "Homebrew ready"
 
-# Enable Nix flakes feature flag in user configuration
-enable_nix_flakes() {
-    echo -e "${YELLOW}Enabling Nix flakes...${NC}"
-    mkdir -p ~/.config/nix
-    if ! grep -q "experimental-features" ~/.config/nix/nix.conf 2>/dev/null; then
-        echo "experimental-features = nix-command flakes" >> ~/.config/nix/nix.conf
-        echo -e "${GREEN}Flakes enabled${NC}"
-    else
-        echo -e "${GREEN}Flakes already enabled${NC}"
+  elif [[ "$OS" == "linux" ]]; then
+    # Ensure basic tools exist
+    if ! command -v curl &>/dev/null || ! command -v git &>/dev/null; then
+      warn "Installing basic tools..."
+      sudo apt-get update -qq
+      sudo apt-get install -yqq curl git jq rsync
     fi
+    info "System prerequisites ready"
+  fi
 }
 
-# Determine the absolute directory of this script
-determine_script_dir() {
-    SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+# ---------------------------------------------------------------------------
+# 3. Install Ansible
+# ---------------------------------------------------------------------------
+install_ansible() {
+  if command -v ansible-playbook &>/dev/null; then
+    info "Ansible already installed"
+    return
+  fi
+
+  warn "Installing Ansible..."
+  if [[ "$OS" == "darwin" ]]; then
+    brew install ansible
+  elif [[ "$OS" == "linux" ]]; then
+    # Use pipx or pip for latest Ansible
+    if command -v pipx &>/dev/null; then
+      pipx install --include-deps ansible
+    elif command -v pip3 &>/dev/null; then
+      pip3 install --user ansible
+    else
+      sudo apt-get install -yqq python3-pip
+      pip3 install --user ansible
+    fi
+    export PATH="$HOME/.local/bin:$PATH"
+  fi
+  info "Ansible installed"
 }
 
-# Build and activate the Home Manager configuration for the selected profile
-activate_home_manager() {
-    echo -e "${YELLOW}Building and activating Home Manager configuration...${NC}"
-    cd "$SCRIPT_DIR"
-    nix run home-manager/master -- switch --flake ".#$PROFILE" -b backup
+# ---------------------------------------------------------------------------
+# 4. Get devup (release-based or use local clone)
+# ---------------------------------------------------------------------------
+get_devup() {
+  # If running from inside the repo, use it directly
+  local script_dir
+  script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+  if [[ -f "$script_dir/ansible/playbook.yml" ]]; then
+    info "Running from local clone at $script_dir"
+    # Copy to install dir so we have a stable installed copy
+    mkdir -p "$INSTALL_DIR"
+    rsync -a --delete \
+      --exclude='.git' \
+      "$script_dir/" "$INSTALL_DIR/"
+    # Mark the version
+    if command -v git &>/dev/null && git -C "$script_dir" rev-parse HEAD &>/dev/null; then
+      git -C "$script_dir" describe --tags --always 2>/dev/null > "$INSTALL_DIR/.version" || \
+        git -C "$script_dir" rev-parse --short HEAD > "$INSTALL_DIR/.version"
+    else
+      echo "local-$(date +%Y%m%d)" > "$INSTALL_DIR/.version"
+    fi
+    return
+  fi
+
+  # Otherwise, download latest release
+  warn "Downloading latest devup release..."
+  local api_url="https://api.github.com/repos/${REPO}/releases/latest"
+  local latest_tag
+  latest_tag=$(curl -sf "$api_url" | jq -r '.tag_name // empty')
+
+  local tarball_url
+  if [[ -n "$latest_tag" ]]; then
+    tarball_url="https://github.com/${REPO}/archive/refs/tags/${latest_tag}.tar.gz"
+  else
+    warn "No releases found, using main branch..."
+    latest_tag="main-$(date +%Y%m%d)"
+    tarball_url="https://github.com/${REPO}/archive/refs/heads/main.tar.gz"
+  fi
+
+  local tmp_dir
+  tmp_dir=$(mktemp -d)
+  trap "rm -rf '$tmp_dir'" EXIT
+
+  curl -sL "$tarball_url" | tar xz -C "$tmp_dir" --strip-components=1
+  mkdir -p "$INSTALL_DIR"
+  rsync -a --delete "$tmp_dir/" "$INSTALL_DIR/"
+  echo "$latest_tag" > "$INSTALL_DIR/.version"
+  info "Downloaded version: $latest_tag"
 }
 
-# Final helpful instructions
-print_next_steps() {
-    echo -e "${GREEN}✨ Bootstrap complete!${NC}"
-    echo ""
-    echo "Next steps:"
-    echo "1. Restart your shell or run: source ~/.nix-profile/etc/profile.d/hm-session-vars.sh"
-    echo "2. To apply future changes: home-manager switch --flake ."
-    echo "3. To create a project: nix flake init -t .#rust (or c, node, python, go)"
-    echo ""
-    echo "Read NIX_README.md for more information."
+# ---------------------------------------------------------------------------
+# 5. Run Ansible playbook
+# ---------------------------------------------------------------------------
+run_ansible() {
+  info "Running Ansible playbook..."
+  cd "$INSTALL_DIR"
+
+  local ask_become=""
+  if [[ "$OS" == "linux" ]]; then
+    ask_become="--ask-become-pass"
+  fi
+
+  ansible-playbook \
+    -i ansible/inventory/localhost.yml \
+    ansible/playbook.yml \
+    $ask_become
+
+  info "Ansible playbook completed"
 }
 
-# Orchestrate the bootstrap flow
+# ---------------------------------------------------------------------------
+# 6. Finish
+# ---------------------------------------------------------------------------
+print_done() {
+  echo ""
+  info "Dev environment setup complete!"
+  echo ""
+  echo "Next steps:"
+  echo "  1. Restart your shell (or run: exec zsh)"
+  echo "  2. Open nvim to let Mason install LSP servers"
+  echo "  3. Run 'devup-update' anytime to update to the latest release"
+  echo ""
+  echo "Installed to: $INSTALL_DIR"
+  echo "Version:      $(cat "$INSTALL_DIR/.version")"
+}
+
+# ---------------------------------------------------------------------------
+# Main
+# ---------------------------------------------------------------------------
 main() {
-    detect_os_and_profile
-    install_nix_if_missing
-    enable_nix_flakes
-    determine_script_dir
-    activate_home_manager
-    print_next_steps
+  echo "====================================="
+  echo "  Devup Bootstrap"
+  echo "====================================="
+  echo ""
+
+  detect_os
+  install_prerequisites
+  install_ansible
+  get_devup
+  run_ansible
+  print_done
 }
 
 main "$@"

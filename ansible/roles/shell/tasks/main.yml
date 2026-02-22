@@ -1,0 +1,85 @@
+---
+- name: Ensure zsh is the default shell
+  when: ansible_facts['os_family'] == "Darwin"
+  block:
+    - name: Get current shell
+      ansible.builtin.command: echo $SHELL
+      register: current_shell
+      changed_when: false
+
+    - name: Find zsh path
+      ansible.builtin.command: which zsh
+      register: zsh_path
+      changed_when: false
+
+    - name: Set zsh as default shell
+      ansible.builtin.user:
+        name: "{{ ansible_facts['user_id'] }}"
+        shell: "{{ zsh_path.stdout }}"
+      become: true
+      when:
+        - current_shell.stdout != zsh_path.stdout
+
+- name: Install Oh My Zsh
+  block:
+    - name: Check if Oh My Zsh is installed
+      ansible.builtin.stat:
+        path: "{{ ansible_facts['env']['HOME'] }}/.oh-my-zsh"
+      register: omz_check
+
+    - name: Install Oh My Zsh
+      ansible.builtin.shell: |
+        sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended --keep-zshrc
+      when: not omz_check.stat.exists
+
+- name: Install zsh plugins
+  block:
+    - name: Install fzf-tab
+      ansible.builtin.git:
+        repo: "https://github.com/Aloxaf/fzf-tab.git"
+        dest: "{{ ansible_facts['env']['HOME'] }}/.oh-my-zsh/custom/plugins/fzf-tab"
+        update: true
+      ignore_errors: true
+
+    - name: Install zsh-autosuggestions
+      ansible.builtin.git:
+        repo: "https://github.com/zsh-users/zsh-autosuggestions.git"
+        dest: "{{ ansible_facts['env']['HOME'] }}/.oh-my-zsh/custom/plugins/zsh-autosuggestions"
+        update: true
+
+    - name: Install zsh-syntax-highlighting
+      ansible.builtin.git:
+        repo: "https://github.com/zsh-users/zsh-syntax-highlighting.git"
+        dest: "{{ ansible_facts['env']['HOME'] }}/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting"
+        update: true
+
+    - name: Install zsh-history-substring-search
+      ansible.builtin.git:
+        repo: "https://github.com/zsh-users/zsh-history-substring-search.git"
+        dest: "{{ ansible_facts['env']['HOME'] }}/.oh-my-zsh/custom/plugins/zsh-history-substring-search"
+        update: true
+
+- name: Create zsh data directory
+  ansible.builtin.file:
+    path: "{{ ansible_facts['env']['HOME'] }}/.local/share/zsh"
+    state: directory
+    mode: "0755"
+
+- name: Install TPM (Tmux Plugin Manager)
+  block:
+    - name: Check if TPM is installed
+      ansible.builtin.stat:
+        path: "{{ ansible_facts['env']['HOME'] }}/.tmux/plugins/tpm"
+      register: tpm_check
+
+    - name: Clone TPM
+      ansible.builtin.git:
+        repo: "https://github.com/tmux-plugins/tpm.git"
+        dest: "{{ ansible_facts['env']['HOME'] }}/.tmux/plugins/tpm"
+      when: not tpm_check.stat.exists
+
+- name: Install tmux plugins
+  ansible.builtin.shell: |
+    {{ ansible_facts['env']['HOME'] }}/.tmux/plugins/tpm/bin/install_plugins
+  changed_when: false
+  ignore_errors: true
